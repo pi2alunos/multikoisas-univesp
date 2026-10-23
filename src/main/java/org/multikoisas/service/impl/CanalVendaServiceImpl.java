@@ -46,27 +46,23 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     }
 
     @Override
+    public CanalVendaResponse findByName(String nome) {
+        CanalVendaEntity entity = canalVendaRepository.findByName(nome)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Canal de venda não encontrado"));
+
+        return toResponse(entity);
+    }
+
+    @Override
     public CanalVendaResponse save(CanalVendaRequest request) {
-        if (request.getId() == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "O ID é obrigatório");
-        }
 
-        if (request.getNome() == null || request.getNome().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "O nome é obrigatório");
-        }
-
-        if (canalVendaRepository.findById(request.getId()).isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Já existe um canal com esse ID");
+        if (canalVendaRepository.findByName(request.getNome()).isPresent()) {
+            throw new IllegalArgumentException("Já existe um canal com esse nome");
         }
 
         CanalVendaEntity entity = new CanalVendaEntity();
-        entity.setId(request.getId());
         entity.setNome(request.getNome());
 
         return toResponse(canalVendaRepository.save(entity));
@@ -75,9 +71,7 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     @Override
     public boolean update(Integer id, CanalVendaRequest request) {
         if (request.getNome() == null || request.getNome().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "O nome é obrigatório");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"O nome é obrigatório");
         }
 
         if (canalVendaRepository.findById(id).isEmpty()) {

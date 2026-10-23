@@ -12,6 +12,8 @@ public interface CanalVendaService {
 
     CanalVendaResponse findById(Integer id);
 
+    CanalVendaResponse findByName(String nome);
+
     CanalVendaResponse save(CanalVendaRequest request);
 
     boolean update(Integer id, CanalVendaRequest request);

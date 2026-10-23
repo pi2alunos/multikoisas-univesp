@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -13,9 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
-                .csrf(csrf -> csrf.disable()) // Desativa o CSRF pois a API é stateless baseada em token
+                .csrf(AbstractHttpConfigurer::disable) // Desativa o CSRF pois a API é stateless baseada em token
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Garante que o servidor não guarda sessões
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -38,6 +39,7 @@ public class SecurityConfig {
                                 "/canalvenda/**",
                                 "/categoria/**",
                                 "/produto/**",
+                                "/imagem/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html").permitAll()

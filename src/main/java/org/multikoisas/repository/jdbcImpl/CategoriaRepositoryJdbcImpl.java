@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CategoriaRepositoryJdbcImpl implements CategoriaRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final String SELECT_ALL = "SELECT id, nome FROM public.categoria";
 
     public CategoriaRepositoryJdbcImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -28,22 +29,34 @@ public class CategoriaRepositoryJdbcImpl implements CategoriaRepository {
 
     @Override
     public List<CategoriaEntity> findAll() {
-        return jdbcTemplate.query("SELECT id, nome FROM categoria", ROW_MAPPER);
+        return jdbcTemplate.query(SELECT_ALL, ROW_MAPPER);
     }
 
     @Override
     public Optional<CategoriaEntity> findById(Integer id) {
+        String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        List<CategoriaEntity> result = jdbcTemplate.query("SELECT id, nome FROM categoria WHERE id = :id", params, ROW_MAPPER);
+        List<CategoriaEntity> result = jdbcTemplate.query(SELECT_BY_ID, params, ROW_MAPPER);
+        return result.stream().findFirst();
+    }
+
+    @Override
+    public Optional<CategoriaEntity> findByName(String nome) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("nome", nome);
+        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
+        List<CategoriaEntity> result = jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
         return result.stream().findFirst();
     }
 
     @Override
     public CategoriaEntity save(CategoriaEntity entity) {
+        String INSERT = "INSERT INTO categoria (nome) VALUES (:nome) RETURNING id";
         Map<String, Object> params = new HashMap<>();
         params.put("nome", entity.getNome());
-        Integer id = jdbcTemplate.queryForObject("INSERT INTO categoria (nome) VALUES (:nome) RETURNING id", params, Integer.class);
+        Integer id = jdbcTemplate.queryForObject(INSERT, params, Integer.class);
                 entity.setId(id);
                 return entity;
     }

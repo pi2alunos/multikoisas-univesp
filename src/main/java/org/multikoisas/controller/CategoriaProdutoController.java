@@ -17,7 +17,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/categoriaproduto")
 @RequiredArgsConstructor
-
 public class CategoriaProdutoController {
 
     private final CategoriaProdutoServiceImpl service;

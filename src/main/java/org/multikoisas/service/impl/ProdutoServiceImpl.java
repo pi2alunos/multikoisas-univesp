@@ -30,12 +30,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     private void validar(ProdutoRequest request) {
-        if (request == null
-                || request.getNome() == null
-                || request.getNome().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "O nome do produto é obrigatório");
+        if (request == null || request.getNome() == null || request.getNome().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"O nome do produto é obrigatório");
         }
     }
 
@@ -50,9 +46,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ProdutoResponse findById(Integer id) {
         ProdutoEntity entity = produtoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Produto não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado"));
 
         return toResponse(entity);
     }
@@ -73,9 +67,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         validar(request);
 
         if (produtoRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Produto não encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado");
         }
 
         ProdutoEntity entity = new ProdutoEntity();
@@ -89,17 +81,13 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public boolean deleteById(Integer id) {
         if (produtoRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Produto não encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado");
         }
 
         try {
             return produtoRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Não é possível excluir este produto porque ele está associado a outras informações.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Não é possível excluir este produto porque ele está associado a outras informações.");
         }
     }
 }

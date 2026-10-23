@@ -11,7 +11,8 @@ import lombok.*;
 
 public class SocialNetworkRequest
 {
+    @NotBlank(message = "O campo descricao e obrigatoria")
     private String descricao;
-    @NotBlank(message = "O link é obrigatório")
+    @NotBlank(message = "O campo link e obrigatorio")
     private String link;
 }
