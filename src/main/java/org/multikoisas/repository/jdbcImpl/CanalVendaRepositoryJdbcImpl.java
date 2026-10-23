@@ -8,12 +8,17 @@ import java.util.Optional;
 import org.multikoisas.entities.CanalVendaEntity;
 import org.multikoisas.repository.CanalVendaRepository;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    private final String SELECT_ALL = "SELECT id, nome FROM public.\"canalVenda\"";
+    private final String INSERT = "INSERT INTO public.\"canalVenda\" (nome) VALUES (:nome)";
 
     public CanalVendaRepositoryJdbcImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -28,24 +33,41 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
 
     @Override
     public List<CanalVendaEntity> findAll() {
-        return jdbcTemplate.query("SELECT id, nome FROM \"canalVenda\"", ROW_MAPPER);
+        return jdbcTemplate.query(SELECT_ALL, ROW_MAPPER);
     }
 
     @Override
+    public Optional<CanalVendaEntity> findByName(String nome) {
+        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
+        Map<String, Object> params = new HashMap<>();
+        params.put("nome", nome);
+        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
+        return result.stream().findFirst();
+    }
+
     public Optional<CanalVendaEntity> findById(Integer id) {
+        String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        List<CanalVendaEntity> result = jdbcTemplate.query("SELECT id, nome FROM \"canalVenda\" WHERE id = :id", params, ROW_MAPPER);
+        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_ID, params, ROW_MAPPER);
         return result.stream().findFirst();
     }
 
     @Override
     public CanalVendaEntity save(CanalVendaEntity entity) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", entity.getId());
-        params.put("nome", entity.getNome());
-        jdbcTemplate.update("INSERT INTO \"canalVenda\" (id, nome) VALUES (:id, :nome)", params);
-                return entity;
+        // 1. Preparamos o SQL correto para inserção
+        String INSERT_SQL = INSERT + " RETURNING id";
+
+        // 2. Lemos todos os atributos do usuário (que vieram preenchidos do POST)
+        SqlParameterSource params = new BeanPropertySqlParameterSource(entity);
+
+        // 3. Executamos o INSERT de fato e aguardamos o ID gerado como retorno
+        Integer generatedId = jdbcTemplate.queryForObject(INSERT_SQL, params, Integer.class);
+
+        // 4. Injetamos o ID no objeto e o devolvemos
+        entity.setId(generatedId);
+
+        return entity;
     }
 
     @Override

@@ -1,6 +1,7 @@
 
 package org.multikoisas.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CanalVendaRequest {
 
-    private Integer id;
+    @NotBlank(message = "O campo nome e obrigatorio")
     private String nome;
 }
