@@ -1,13 +1,13 @@
 package org.multikoisas.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.multikoisas.dto.ProdutoImagemResponse;
 import org.multikoisas.service.S3StorageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class S3StorageServiceImpl implements S3StorageService {
         String extension = originalFilename != null && originalFilename.contains(".")
                 ? originalFilename.substring(originalFilename.lastIndexOf("."))
                 : "";
-        String uniqueFileName = UUID.randomUUID().toString() + extension;
+        String uniqueFileName = UUID.randomUUID() + extension;
 
         try {
             // Constrói o contrato de envio estipulando o bucket, o nome do ficheiro e o tipo MIME (ex: image/png)
@@ -60,9 +60,25 @@ public class S3StorageServiceImpl implements S3StorageService {
         }
     }
 
-    public ProdutoImagemResponse delete(Integer id, Integer productId){ return null;}
+    @Override
+    public void deleteFile(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return;
+        }
 
-    private String getExtension(String filename) {
-        return (filename != null && filename.contains(".")) ? filename.substring(filename.lastIndexOf(".")) : "";
+        // Extrai a "key" (nome do arquivo) a partir da URL pública
+        String key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+        try {
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (Exception e) {
+            throw new RuntimeException("Falha ao deletar a imagem no Supabase S3.", e);
+        }
     }
+
 }

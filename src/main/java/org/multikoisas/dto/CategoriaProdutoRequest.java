@@ -10,9 +10,9 @@ import lombok.*;
 @NoArgsConstructor
 public class CategoriaProdutoRequest {
 
-    @NotNull(message = "categoriaId é obrigatório")
+    @NotNull(message = "categoriaId e obrigatorio")
     private Integer categoriaId;
 
-    @NotNull(message = "produtoId é obrigatório")
+    @NotNull(message = "produtoId e obrigatorio")
     private Integer produtoId;
 }

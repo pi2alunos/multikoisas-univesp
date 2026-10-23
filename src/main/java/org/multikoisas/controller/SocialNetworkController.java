@@ -17,7 +17,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/socialnetwork")
 @RequiredArgsConstructor
-
 public class SocialNetworkController {
 
     private final SocialNetworkService socialService;
@@ -29,8 +28,8 @@ public class SocialNetworkController {
         return response != null? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping(params = "description")
-    public ResponseEntity<SocialNetworkResponse> getSocialNetworkByName(@RequestParam("description") String description)
+    @GetMapping("/{description}")
+    public ResponseEntity<SocialNetworkResponse> getSocialNetworkByName(@PathVariable String description)
     {
         SocialNetworkResponse response = socialService.findByName(description);
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();

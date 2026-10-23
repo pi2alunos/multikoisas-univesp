@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ProdutoImagemRequest {
 
-    @NotNull(message = "O arquivo de imagem é obrigatório.")
+    @NotNull(message = "O arquivo de imagem e obrigatorio")
     private MultipartFile file;
     @NotNull(message = "O produtoId e obrigatorio")
     private Integer produtoId;

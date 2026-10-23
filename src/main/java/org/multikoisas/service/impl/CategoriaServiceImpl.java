@@ -21,13 +21,6 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
 
-    private CategoriaResponse toResponse(CategoriaEntity entity) {
-        return CategoriaResponse.builder()
-                .id(entity.getId())
-                .nome(entity.getNome())
-                .build();
-    }
-
     private void validarNome(String nome) {
         if (nome == null || nome.isBlank()) {
             throw new ResponseStatusException(
@@ -50,22 +43,32 @@ public class CategoriaServiceImpl implements CategoriaService {
         CategoriaEntity entity = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Categoria não encontrada"
+                        "Categoria nao encontrada"
                 ));
 
         return toResponse(entity);
     }
 
     @Override
+    public CategoriaResponse findByName(String nome) {
+        CategoriaEntity entity = categoriaRepository.findByName(nome)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Categoria nao encontrada"));
+        return toResponse(entity);
+    }
+
+    @Override
     public CategoriaResponse save(CategoriaRequest request) {
-        validarNome(request.getNome());
 
-        CategoriaEntity entity = new CategoriaEntity();
-        entity.setNome(request.getNome());
+        categoriaRepository.findByName(request.getNome()).ifPresent(user -> {
+            throw new IllegalArgumentException("Esta rede social já está cadastrada.");
+        });
 
-        CategoriaEntity salva = categoriaRepository.save(entity);
+        CategoriaEntity entityToSave = toEntity(request);
+        CategoriaEntity savedEntity = categoriaRepository.save(entityToSave);
 
-        return toResponse(salva);
+        return toResponse(savedEntity);
     }
 
     @Override
@@ -103,5 +106,20 @@ public class CategoriaServiceImpl implements CategoriaService {
                     "Não é possível excluir esta categoria porque ela está associada a um ou mais produtos."
             );
         }
+    }
+
+    private CategoriaEntity toEntity(CategoriaRequest request)
+    {
+        return CategoriaEntity.builder()
+                .id(request.getId())
+                .nome(request.getNome())
+                .build();
+    }
+
+    private CategoriaResponse toResponse(CategoriaEntity entity) {
+        return CategoriaResponse.builder()
+                .id(entity.getId())
+                .nome(entity.getNome())
+                .build();
     }
 }
