@@ -28,6 +28,11 @@ public class CategoriaController {
         return ResponseEntity.ok(categoriaService.findById(id));
     }
 
+    @GetMapping(params = "nome")
+    public ResponseEntity<CategoriaResponse> getCategoriaById(@RequestParam("nome") String nome) {
+        return ResponseEntity.ok(categoriaService.findByName(nome));
+    }
+
     @PostMapping
     public ResponseEntity<CategoriaResponse> createCategoria(@RequestBody CategoriaRequest request) {
         CategoriaResponse response = categoriaService.save(request);

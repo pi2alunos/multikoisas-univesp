@@ -12,6 +12,8 @@ public interface CategoriaService {
 
     CategoriaResponse findById(Integer id);
 
+    CategoriaResponse findByName(String nome);
+
     CategoriaResponse save(CategoriaRequest request);
 
     boolean update(Integer id, CategoriaRequest request);
