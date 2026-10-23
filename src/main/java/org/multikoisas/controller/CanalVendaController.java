@@ -3,19 +3,13 @@ package org.multikoisas.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.multikoisas.dto.CanalVendaRequest;
 import org.multikoisas.dto.CanalVendaResponse;
 import org.multikoisas.service.CanalVendaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/canalvenda")
@@ -38,9 +32,14 @@ public class CanalVendaController {
         return ResponseEntity.ok(canalVendaService.findById(id));
     }
 
+    @GetMapping(params = "nome")
+    public ResponseEntity<CanalVendaResponse> getCanalVendaByName(
+            @RequestParam("nome") String nome) {
+        return ResponseEntity.ok(canalVendaService.findByName(nome));
+    }
+
     @PostMapping
-    public ResponseEntity<CanalVendaResponse> createCanalVenda(
-            @RequestBody CanalVendaRequest request) {
+    public ResponseEntity<CanalVendaResponse> createCanalVenda(@Valid @RequestBody CanalVendaRequest request) {
         CanalVendaResponse response = canalVendaService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -60,5 +59,10 @@ public class CanalVendaController {
 
         canalVendaService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }
