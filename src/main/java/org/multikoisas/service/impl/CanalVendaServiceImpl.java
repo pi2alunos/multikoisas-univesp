@@ -44,6 +44,16 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     }
 
     @Override
+    public CanalVendaResponse findByName(String nome) {
+        CanalVendaEntity entity = canalVendaRepository.findByName(nome)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Canal de venda não encontrado"));
+
+        return toResponse(entity);
+    }
+
+    @Override
     public CanalVendaResponse save(CanalVendaRequest request) {
 
         if (canalVendaRepository.findByName(request.getNome()).isPresent()) {

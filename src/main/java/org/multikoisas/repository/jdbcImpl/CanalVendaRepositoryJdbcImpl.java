@@ -16,9 +16,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
-
     private final String SELECT_ALL = "SELECT id, nome FROM public.\"canalVenda\"";
-    private final String INSERT = "INSERT INTO public.\"canalVenda\" (nome) VALUES (:nome)";
+    private final String INSERT = "INSERT INTO public.\"canalVenda\" (:nome) VALUES (:nome)";
 
     public CanalVendaRepositoryJdbcImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

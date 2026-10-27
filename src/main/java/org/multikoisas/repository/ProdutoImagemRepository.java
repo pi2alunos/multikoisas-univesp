@@ -10,9 +10,9 @@ public interface ProdutoImagemRepository {
 
     ProdutoImagemEntity findById(Integer productId);
 
-    List<ProdutoImagemEntity> findByProduct(Integer productId);
+    List<ProdutoImagemEntity> findByProdutoId(Integer productId);
 
     ProdutoImagemEntity save(ProdutoImagemEntity entity);
 
-    boolean deleteByProduct(ProdutoImagemEntity entity);
+    void deleteById(Integer id);
 }

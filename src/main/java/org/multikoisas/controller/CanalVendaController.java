@@ -29,6 +29,12 @@ public class CanalVendaController {
         return ResponseEntity.ok(canalVendaService.findById(id));
     }
 
+    @GetMapping(params = "nome")
+    public ResponseEntity<CanalVendaResponse> getCanalVendaByName(
+            @RequestParam("nome") String nome) {
+        return ResponseEntity.ok(canalVendaService.findByName(nome));
+    }
+
     @PostMapping
     public ResponseEntity<CanalVendaResponse> createCanalVenda(@Valid @RequestBody CanalVendaRequest request) {
         CanalVendaResponse response = canalVendaService.save(request);
@@ -47,9 +53,9 @@ public class CanalVendaController {
         return ResponseEntity.noContent().build();
     }
 
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        // Interceta a exceção de negócio e devolve o status 409 com a mensagem exata
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }
