@@ -10,6 +10,7 @@ import org.multikoisas.dto.CanalVendaResponse;
 import org.multikoisas.entities.CanalVendaEntity;
 import org.multikoisas.repository.CanalVendaRepository;
 import org.multikoisas.service.CanalVendaService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -89,6 +90,13 @@ public class CanalVendaServiceImpl implements CanalVendaService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal de venda não encontrado");
         }
 
-        return canalVendaRepository.deleteById(id);
+        try {
+            return canalVendaRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Não é possível excluir este canal de venda porque ela está associada a um ou mais produtos."
+            );
+        }
     }
 }

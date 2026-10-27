@@ -61,8 +61,10 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Override
     public CategoriaResponse save(CategoriaRequest request) {
 
+        validarNome(request.getNome());
+
         categoriaRepository.findByName(request.getNome()).ifPresent(user -> {
-            throw new IllegalArgumentException("Esta rede social já está cadastrada.");
+            throw new IllegalArgumentException("Esta categoria já está cadastrada.");
         });
 
         CategoriaEntity entityToSave = toEntity(request);

@@ -66,7 +66,8 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
         // 3. Regra de Negócio Isolada (O E-mail)
         // O e-mail continua precisando de um bloco próprio porque requer validação no banco de dados.
         String novaDescricao = request.getDescricao();
-        if (novaDescricao != null && !novaDescricao.isBlank() && !novaDescricao.equals(socialNetworkToUpdate.getDescricao())) {
+
+        if (novaDescricao != null && !novaDescricao.isBlank() ) {
 
             socialRepository.findByName(novaDescricao).ifPresent(existingSocialNetwork -> {
                 throw new IllegalArgumentException("Esta rede social já está cadastrada.");

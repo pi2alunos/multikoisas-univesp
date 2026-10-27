@@ -102,7 +102,8 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
                 INSERT,
                 Map.of(
                         "canalVendaId", entity.getCanalVendaId(),
-                        "produtoId", entity.getProdutoId()
+                        "produtoId", entity.getProdutoId(),
+                        "link", entity.getLink()
                 )
         );
 
