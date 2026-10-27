@@ -22,24 +22,13 @@ public class CategoriaProdutoController {
     private final CategoriaProdutoServiceImpl service;
 
     @GetMapping
-    public ResponseEntity<List<CategoriaProdutoResponse>> getCategoriasProdutos() {
-        List<CategoriaProdutoResponse> response = service.findAll();
+    public ResponseEntity<List<CategoriaProdutoResponse>> getCategoriasProdutosByProductOrCategoryOrAll(
+            @RequestParam(required = false) Integer produtoId,
+            @RequestParam(required = false) Integer categoriaId) {
+        List<CategoriaProdutoResponse> response = service.findByProdutoIdOrCategoriaIdOrAll(produtoId, categoriaId);
 
-        return response.isEmpty()? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
+        return response.isEmpty()? ResponseEntity.notFound().build(): ResponseEntity.ok(response);
     }
-
-    @GetMapping(params = "produto")
-    public ResponseEntity<List<CategoriaProdutoResponse>> getProduto(@RequestParam("produto") Integer produtoId){
-        List<CategoriaProdutoResponse> response = service.findByProdutoId(produtoId);
-        return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
-    }
-
-    @GetMapping(params = "categoria")
-    public ResponseEntity<List<CategoriaProdutoResponse>> getCategoria(@RequestParam("categoria") Integer categoriaId){
-        List<CategoriaProdutoResponse> response = service.findByCategoriaId(categoriaId);
-        return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
-    }
-
 
     @PostMapping
     public ResponseEntity<Object> save(@Valid @RequestBody CategoriaProdutoRequest request) {

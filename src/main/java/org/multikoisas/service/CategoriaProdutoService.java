@@ -13,6 +13,8 @@ public interface CategoriaProdutoService {
 
     List<CategoriaProdutoResponse> findByCategoriaId(Integer categoriaId);
 
+    List<CategoriaProdutoResponse> findByProdutoIdOrCategoriaIdOrAll (Integer produtoId, Integer categoriaId);
+
     CategoriaProdutoResponse save(CategoriaProdutoRequest categoriaProdutoRequest);
 
     boolean delete(Integer categoriaId, Integer produtoId);

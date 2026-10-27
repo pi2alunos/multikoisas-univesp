@@ -58,6 +58,11 @@ public class CategoriaProdutoRepositoryJdbcImpl implements CategoriaProdutoRepos
                 .toList();
     }
 
+    public List<CategoriaProdutoEntity> findByProdutoIdAndCategoriaId (Integer produtoId, Integer categoriaId) {
+        String SELECT_BY_PRODUTO_CATEGORIA = SELECT_ALL + " WHERE \"produtoId\" = :produtoId AND \"categoriaId\" = :categoriaId";
+        return jdbcTemplate.query(SELECT_BY_PRODUTO_CATEGORIA, Map.of("produtoId",produtoId, "categoriaId", categoriaId), ROW_MAPPER);
+    }
+
     public CategoriaProdutoEntity save(CategoriaProdutoEntity entity) {
         jdbcTemplate.update(INSERT, Map.of("categoriaId", entity.getCategoriaId(),"produtoId", entity.getProdutoId()));
         return entity;

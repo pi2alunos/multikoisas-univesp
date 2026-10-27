@@ -12,6 +12,8 @@ public interface CategoriaProdutoRepository {
 
     List<CategoriaProdutoEntity> findByCategoriaId(Integer categoriaId);
 
+    List<CategoriaProdutoEntity> findByProdutoIdAndCategoriaId (Integer produtoId, Integer categoriaId);
+
     CategoriaProdutoEntity save(CategoriaProdutoEntity entity);
 
     int delete(Integer produtoId, Integer categoriaId);

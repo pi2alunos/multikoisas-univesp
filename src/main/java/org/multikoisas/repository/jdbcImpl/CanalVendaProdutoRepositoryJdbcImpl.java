@@ -19,11 +19,11 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     private static final String SELECT_ALL =
-            "SELECT \"canalVendaId\", \"produtoId\" FROM public.\"canalVendaProduto\"";
+            "SELECT \"canalVendaId\", \"produtoId\", link FROM public.\"canalVendaProduto\"";
 
     private static final String INSERT =
-            "INSERT INTO public.\"canalVendaProduto\" (\"canalVendaId\", \"produtoId\") " +
-                    "VALUES (:canalVendaId, :produtoId)";
+            "INSERT INTO public.\"canalVendaProduto\" (\"canalVendaId\", \"produtoId\", link) " +
+                    "VALUES (:canalVendaId, :produtoId, :link)";
 
     private static final String DELETE =
             "DELETE FROM public.\"canalVendaProduto\" " +
@@ -42,6 +42,7 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
 
         canalVendaProdutoEntity.setCanalVendaId(rs.getInt("canalVendaId"));
         canalVendaProdutoEntity.setProdutoId(rs.getInt("produtoId"));
+        canalVendaProdutoEntity.setLink(rs.getString("link"));
 
         return canalVendaProdutoEntity;
     };
@@ -68,6 +69,7 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
                 .map(entity -> CanalVendaProdutoEntity.builder()
                         .canalVendaId(entity.getCanalVendaId())
                         .produtoId(entity.getProdutoId())
+                        .link(entity.getLink())
                         .build())
                 .toList();
     }

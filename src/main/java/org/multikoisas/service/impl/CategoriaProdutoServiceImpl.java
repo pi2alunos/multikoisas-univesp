@@ -41,6 +41,20 @@ public class CategoriaProdutoServiceImpl implements CategoriaProdutoService {
                 .toList();
     }
 
+    public List<CategoriaProdutoResponse> findByProdutoIdOrCategoriaIdOrAll (Integer produtoId, Integer categoriaId) {
+        List<CategoriaProdutoEntity> entity;
+        if (produtoId == null && categoriaId == null){
+            entity = repository.findAll();
+        } else if (produtoId != null && categoriaId != null) {
+            entity = repository.findByProdutoIdAndCategoriaId(produtoId, categoriaId);
+        } else if (produtoId != null) {
+            entity = repository.findByProdutoId(produtoId);
+        } else {
+            entity = repository.findByCategoriaId(categoriaId);
+        }
+        return entity.stream().map(this::toResponse).toList();
+    }
+
     @Override
     public CategoriaProdutoResponse save(CategoriaProdutoRequest request) {
         if (repository.exists(request.getProdutoId(), request.getCategoriaId())) {
