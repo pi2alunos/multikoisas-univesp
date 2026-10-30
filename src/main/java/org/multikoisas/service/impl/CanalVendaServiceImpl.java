@@ -38,9 +38,7 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     @Override
     public CanalVendaResponse findById(Integer id) {
         CanalVendaEntity entity = canalVendaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Canal de venda não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal de venda não encontrado"));
 
         return toResponse(entity);
     }
@@ -71,13 +69,11 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     @Override
     public boolean update(Integer id, CanalVendaRequest request) {
         if (request.getNome() == null || request.getNome().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"O nome é obrigatório");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O nome é obrigatório");
         }
 
         if (canalVendaRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Canal de venda não encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal de venda não encontrado");
         }
 
         CanalVendaEntity entity = new CanalVendaEntity();
@@ -90,9 +86,7 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     @Override
     public boolean deleteById(Integer id) {
         if (canalVendaRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Canal de venda não encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal de venda não encontrado");
         }
 
         return canalVendaRepository.deleteById(id);

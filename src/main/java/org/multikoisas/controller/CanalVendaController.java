@@ -4,6 +4,7 @@ package org.multikoisas.controller;
 import java.util.List;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.CanalVendaRequest;
 import org.multikoisas.dto.CanalVendaResponse;
 import org.multikoisas.service.CanalVendaService;
@@ -13,13 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/canalvenda")
+@RequiredArgsConstructor
 public class CanalVendaController {
 
     private final CanalVendaService canalVendaService;
-
-    public CanalVendaController(CanalVendaService canalVendaService) {
-        this.canalVendaService = canalVendaService;
-    }
 
     @GetMapping
     public ResponseEntity<List<CanalVendaResponse>> getCanaisVenda() {
@@ -27,8 +25,7 @@ public class CanalVendaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CanalVendaResponse> getCanalVendaById(
-            @PathVariable Integer id) {
+    public ResponseEntity<CanalVendaResponse> getCanalVendaById(@PathVariable Integer id) {
         return ResponseEntity.ok(canalVendaService.findById(id));
     }
 
@@ -45,18 +42,13 @@ public class CanalVendaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCanalVenda(
-            @PathVariable Integer id,
-            @RequestBody CanalVendaRequest request) {
-
+    public ResponseEntity<Void> updateCanalVenda(@PathVariable Integer id, @RequestBody CanalVendaRequest request) {
         canalVendaService.update(id, request);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCanalVenda(
-            @PathVariable Integer id) {
-
+    public ResponseEntity<Void> deleteCanalVenda(@PathVariable Integer id) {
         canalVendaService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

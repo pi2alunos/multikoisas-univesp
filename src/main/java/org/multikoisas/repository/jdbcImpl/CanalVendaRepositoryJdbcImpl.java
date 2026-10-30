@@ -32,21 +32,23 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
 
     @Override
     public List<CanalVendaEntity> findAll() {
-        return jdbcTemplate.query("SELECT id, nome FROM \"canalVenda\"", ROW_MAPPER);
+        return jdbcTemplate.query(SELECT_ALL, ROW_MAPPER);
     }
 
     @Override
-    public Optional<CanalVendaEntity> findById(Integer id) {
+    public Optional<CanalVendaEntity> findByName(String nome) {
+        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
         Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
-        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_ALL + " WHERE id = :id", params, ROW_MAPPER);
+        params.put("nome", nome);
+        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
         return result.stream().findFirst();
     }
 
-    public Optional<CanalVendaEntity> findByName(String nome) {
+    public Optional<CanalVendaEntity> findById(Integer id) {
+        String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
         Map<String, Object> params = new HashMap<>();
-        params.put("nome", nome);
-        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_ALL + " WHERE nome = :nome", params, ROW_MAPPER);
+        params.put("id", id);
+        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_ID, params, ROW_MAPPER);
         return result.stream().findFirst();
     }
 
