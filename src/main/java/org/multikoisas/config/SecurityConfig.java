@@ -27,6 +27,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/categoria/**",
                                 "/produto/**",
+                                "/canalvenda/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html").permitAll()git
                         .requestMatchers(
