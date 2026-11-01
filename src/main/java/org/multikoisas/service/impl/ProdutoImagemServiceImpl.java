@@ -69,6 +69,22 @@ public class ProdutoImagemServiceImpl implements ProdutoImagemService {
         return repository.findByProdutoId(produtoId).stream().map(this::toResponse).toList();
     }
 
+    @Override
+    @Transactional
+    public void deleteAllByProdutoId(Integer produtoId) {
+        // 1. Busca todas as imagens vinculadas a este produto
+        List<ProdutoImagemResponse> imagens = this.findByProdutoId(produtoId);
+
+        // 2. Itera sobre cada imagem para remover da infraestrutura e persistência
+        for (ProdutoImagemResponse imagem : imagens) {
+            // Remove o arquivo físico na nuvem (Infraestrutura S3)
+            s3Service.deleteFile(imagem.getImagemUrl());
+
+            // Remove o registro na tabela produtoImagem (Persistência)
+            repository.deleteById(imagem.getId());
+        }
+    }
+
     public ProdutoImagemResponse toResponse(ProdutoImagemEntity entity) {
         return ProdutoImagemResponse.builder()
                 .id(entity.getId())

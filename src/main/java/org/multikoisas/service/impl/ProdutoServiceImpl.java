@@ -9,10 +9,12 @@ import org.multikoisas.dto.ProdutoRequest;
 import org.multikoisas.dto.ProdutoResponse;
 import org.multikoisas.entities.ProdutoEntity;
 import org.multikoisas.repository.ProdutoRepository;
+import org.multikoisas.service.ProdutoImagemService;
 import org.multikoisas.service.ProdutoService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -20,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ProdutoServiceImpl implements ProdutoService {
 
     private final ProdutoRepository produtoRepository;
+    private final ProdutoImagemService imagemService;
 
     private ProdutoResponse toResponse(ProdutoEntity entity) {
         return ProdutoResponse.builder()
@@ -89,5 +92,17 @@ public class ProdutoServiceImpl implements ProdutoService {
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,"Não é possível excluir este produto porque ele está associado a outras informações.");
         }
+    }
+
+    @Transactional
+    public void deletarProdutoComDependencias(Integer produtoId) {
+        // 1. Remove os registros de tabelas "filhas" primeiro
+        imagemService.deleteAllByProdutoId(produtoId);
+
+        // 2. Chame os métodos de exclusão de outras tabelas relacionadas aqui
+        // avaliacaoService.deleteAllByProdutoId(produtoId);
+
+        // 3. Por fim, apaga o registro da tabela principal (Produto)
+        produtoRepository.deleteById(produtoId);
     }
 }

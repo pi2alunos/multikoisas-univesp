@@ -29,7 +29,7 @@ public class SecurityConfig {
                                 "/produto/**",
                                 "/canalvenda/**",
                                 "/v3/api-docs/**",
-                                "/swagger-ui.html").permitAll()git
+                                "/swagger-ui.html").permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/error",

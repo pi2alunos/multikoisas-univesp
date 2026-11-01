@@ -16,4 +16,6 @@ public interface ProdutoImagemService {
 
     List<ProdutoImagemResponse> findByProdutoId(Integer id);
 
+    void deleteAllByProdutoId(Integer produtoId);
+
 }
