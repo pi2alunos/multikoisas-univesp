@@ -9,6 +9,8 @@ import org.multikoisas.service.ProdutoImagemService;
 import org.multikoisas.service.S3StorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -72,17 +74,35 @@ public class ProdutoImagemServiceImpl implements ProdutoImagemService {
     @Override
     @Transactional
     public void deleteAllByProdutoId(Integer produtoId) {
-        // 1. Busca todas as imagens vinculadas a este produto
+        // 1. Busca todas as imagens no banco de dados
         List<ProdutoImagemResponse> imagens = this.findByProdutoId(produtoId);
 
-        // 2. Itera sobre cada imagem para remover da infraestrutura e persistência
-        for (ProdutoImagemResponse imagem : imagens) {
-            // Remove o arquivo físico na nuvem (Infraestrutura S3)
-            s3Service.deleteFile(imagem.getImagemUrl());
+        // 2. Extrai apenas as URLs para a memória antes de deletar do banco
+        List<String> urlsParaDeletar = imagens.stream()
+                .map(ProdutoImagemResponse::getImagemUrl)
+                .toList();
 
-            // Remove o registro na tabela produtoImagem (Persistência)
+        // 3. Apaga os registros do banco de dados (Persistência)
+        for (ProdutoImagemResponse imagem : imagens) {
             repository.deleteById(imagem.getId());
         }
+
+        // 4. Registra a exclusão na nuvem para ocorrer SOMENTE APÓS o commit do banco
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                // Este bloco roda de forma isolada, apenas se a exclusão no banco for um sucesso.
+                for (String url : urlsParaDeletar) {
+                    try {
+                        s3Service.deleteFile(url);
+                    } catch (Exception e) {
+                        // O banco já comitou com sucesso. Se o S3 falhar por rede, logamos o erro.
+                        // O sistema se mantém íntegro, evitando reverter o banco por falha externa.
+                        System.err.println("Aviso: Falha ao deletar arquivo órfão no S3: " + url);
+                    }
+                }
+            }
+        });
     }
 
     public ProdutoImagemResponse toResponse(ProdutoImagemEntity entity) {

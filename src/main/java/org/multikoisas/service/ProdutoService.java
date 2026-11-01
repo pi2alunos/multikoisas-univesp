@@ -17,4 +17,6 @@ public interface ProdutoService {
     boolean update(Integer id, ProdutoRequest request);
 
     boolean deleteById(Integer id);
+
+    void deletarProdutoComDependencias(Integer produtoId);
 }

@@ -2,6 +2,7 @@
 package org.multikoisas.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +37,15 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateProduto(@PathVariable Integer id,@RequestBody ProdutoRequest request) {
-        produtoService.update(id, request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ProdutoResponse> updateProduto(@PathVariable Integer id,@RequestBody ProdutoRequest request) {
+        boolean response = produtoService.update(id, request);
+        return response ? ResponseEntity.ok(produtoService.findById(id)) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduto(@PathVariable Integer id) {
-        produtoService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> deleteProduto(@PathVariable Integer id) {
+        produtoService.deletarProdutoComDependencias(id);
+        return ResponseEntity.ok(Map.of("message", "O produto " + id + " deletado com sucesso."));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
