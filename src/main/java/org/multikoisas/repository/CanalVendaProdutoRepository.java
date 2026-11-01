@@ -14,7 +14,11 @@ public interface CanalVendaProdutoRepository {
 
     CanalVendaProdutoEntity save(CanalVendaProdutoEntity entity);
 
-    int delete(Integer produtoId, Integer canalVendaId);
+    int deleteByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId);
+
+    int deleteByProdutoId(Integer produtoId);
+
+    int deleteByCanalId(Integer canalVendaId);
 
     boolean exists(Integer produtoId, Integer canalVendaId);
 }

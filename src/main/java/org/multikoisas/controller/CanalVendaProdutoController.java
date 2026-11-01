@@ -70,10 +70,10 @@ public class CanalVendaProdutoController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> delete(
+    public ResponseEntity<Object> deleteProdutoAndCanal(
             @Valid @RequestBody CanalVendaProdutoRequest request) {
 
-        boolean response = canalVendaProdutoServiceImpl.delete(
+        boolean response = canalVendaProdutoServiceImpl.deleteByProdutoIdAndCanalId(
                 request.getProdutoId(),
                 request.getCanalVendaId()
         );

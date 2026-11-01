@@ -15,7 +15,11 @@ public interface CanalVendaProdutoService {
 
     CanalVendaProdutoResponse save(CanalVendaProdutoRequest request);
 
-    boolean delete(Integer produtoId, Integer canalVendaId);
+    boolean deleteByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId);
+
+    boolean deleteByProdutoId(Integer produtoId);
+
+    boolean deleteByCanalId(Integer canalVendaId);
 
 
 }

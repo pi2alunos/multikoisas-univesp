@@ -25,15 +25,17 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
             "INSERT INTO public.\"canalVendaProduto\" (\"canalVendaId\", \"produtoId\", link) " +
                     "VALUES (:canalVendaId, :produtoId, :link)";
 
-    private static final String DELETE =
+    private static final String DELETE_BY_PRODUTO =
             "DELETE FROM public.\"canalVendaProduto\" " +
-                    "WHERE \"canalVendaId\" = :canalVendaId " +
-                    "AND \"produtoId\" = :produtoId";
+                    "WHERE \"produtoId\" = :produtoId";
 
     private static final String VERIFY =
             "SELECT COUNT(*) FROM public.\"canalVendaProduto\" " +
                     "WHERE \"canalVendaId\" = :canalVendaId " +
                     "AND \"produtoId\" = :produtoId";
+
+    private static final String DELETE_BY_CANAL = "DELETE FROM public.\"canalVendaProduto\" " +
+            "WHERE \"canalVendaId\" = :canalVendaId";
 
 
     private static final RowMapper<CanalVendaProdutoEntity> ROW_MAPPER = (rs, rowNum) -> {
@@ -112,12 +114,32 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
 
 
     @Override
-    public int delete(Integer produtoId, Integer canalVendaId) {
-
+    public int deleteByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId) {
+    String DELETE_BY_ID_AND_CANAL = DELETE_BY_PRODUTO + " AND \"canalVendaId\" = :canalVendaId";
         return jdbcTemplate.update(
-                DELETE,
+                DELETE_BY_ID_AND_CANAL,
                 Map.of(
                         "produtoId", produtoId,
+                        "canalVendaId", canalVendaId
+                )
+        );
+    }
+
+    @Override
+    public int deleteByProdutoId(Integer produtoId) {
+        return jdbcTemplate.update(
+                DELETE_BY_PRODUTO,
+                Map.of(
+                        "produtoId", produtoId
+                )
+        );
+    }
+
+    @Override
+    public int deleteByCanalId(Integer canalVendaId) {
+        return jdbcTemplate.update(
+                DELETE_BY_CANAL,
+                Map.of(
                         "canalVendaId", canalVendaId
                 )
         );

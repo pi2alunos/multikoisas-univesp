@@ -81,14 +81,42 @@ public class CanalVendaProdutoServiceImpl implements CanalVendaProdutoService {
     }
 
     @Override
-    public boolean delete(Integer produtoId, Integer canalVendaId) {
+    public boolean deleteByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId) {
 
         int linhasAfetadas =
-                canalVendaProdutoRepository.delete(produtoId, canalVendaId);
+                canalVendaProdutoRepository.deleteByProdutoIdAndCanalId(produtoId, canalVendaId);
 
         if (linhasAfetadas == 0) {
             throw new IllegalArgumentException(
                     "O vínculo entre este produto e canal de venda não existe."
+            );
+        }
+
+        return true;
+    }
+
+    public boolean deleteByProdutoId(Integer produtoId) {
+
+        int linhasAfetadas =
+                canalVendaProdutoRepository.deleteByProdutoId(produtoId);
+
+        if (linhasAfetadas == 0) {
+            throw new IllegalArgumentException(
+                    "Nao existe vinculo com o produto."
+            );
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean deleteByCanalId(Integer canalVendaId) {
+        int linhasAfetadas =
+                canalVendaProdutoRepository.deleteByCanalId(canalVendaId);
+
+        if (linhasAfetadas == 0) {
+            throw new IllegalArgumentException(
+                    "Nao existe vinculo com o canal de venda."
             );
         }
 
