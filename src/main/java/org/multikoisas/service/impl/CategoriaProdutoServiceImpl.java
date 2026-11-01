@@ -58,7 +58,7 @@ public class CategoriaProdutoServiceImpl implements CategoriaProdutoService {
     @Override
     public CategoriaProdutoResponse save(CategoriaProdutoRequest request) {
         if (repository.exists(request.getProdutoId(), request.getCategoriaId())) {
-            throw new IllegalArgumentException("Este produto já está associado a esta categoria.");
+            throw new IllegalArgumentException("Este produto ja esta associado a esta categoria.");
         }
 
         CategoriaProdutoEntity entity = new CategoriaProdutoEntity();
@@ -75,13 +75,37 @@ public class CategoriaProdutoServiceImpl implements CategoriaProdutoService {
     }
 
     @Override
-    public boolean delete(Integer produtoId, Integer categoriaId) {
+    public boolean deleteByProdutoIdAndCategoriaId(Integer produtoId, Integer categoriaId) {
         // 1. Apaga e recolhe a quantidade de linhas deletadas
-        int linhasAfetadas = repository.delete(produtoId, categoriaId);
+        int linhasAfetadas = repository.deleteByProdutoIdAndCategoriaId(produtoId, categoriaId);
 
         // 2. Se nenhuma linha foi apagada, o vínculo não existia
         if (linhasAfetadas == 0) {
-            throw new IllegalArgumentException("O vínculo entre este produto e categoria não existe.");
+            throw new IllegalArgumentException("O vínculo entre o produto e a categoria nao existe.");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteByProdutoId(Integer produtoId) {
+        // 1. Apaga e recolhe a quantidade de linhas deletadas
+        int linhasAfetadas = repository.deleteByProdutoId(produtoId);
+
+        // 2. Se nenhuma linha foi apagada, o vínculo não existia
+        if (linhasAfetadas == 0) {
+            throw new IllegalArgumentException("Nao existe vínculo com esse produto.");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteByCategoriaId(Integer categoriaId) {
+        // 1. Apaga e recolhe a quantidade de linhas deletadas
+        int linhasAfetadas = repository.deleteByCategoriaId(categoriaId);
+
+        // 2. Se nenhuma linha foi apagada, o vínculo não existia
+        if (linhasAfetadas == 0) {
+            throw new IllegalArgumentException("Nao existe vínculo com essa categoria.");
         }
         return true;
     }

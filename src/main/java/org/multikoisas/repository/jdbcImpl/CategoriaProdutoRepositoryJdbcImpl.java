@@ -19,7 +19,8 @@ public class CategoriaProdutoRepositoryJdbcImpl implements CategoriaProdutoRepos
 
     private static final String SELECT_ALL = "SELECT \"categoriaId\", \"produtoId\" FROM public.\"categoriaProduto\"";
     private static final String INSERT = "INSERT INTO public.\"categoriaProduto\" (\"categoriaId\", \"produtoId\") VALUES (:categoriaId, :produtoId)";
-    private static final String DELETE = "DELETE FROM public.\"categoriaProduto\" WHERE \"categoriaId\" = :categoriaId AND \"produtoId\" = :produtoId";
+    private static final String DELETE_BY_CATEGORIA = "DELETE FROM public.\"categoriaProduto\" WHERE \"categoriaId\" = :categoriaId";
+    private static final String DELETE_BY_PRODUTO = "DELETE FROM public.\"categoriaProduto\" WHERE \"produtoId\" = :produtoId";
     private static final String VERIFY = "SELECT COUNT(*) FROM public.\"categoriaProduto\" WHERE \"categoriaId\" = :categoriaId AND \"produtoId\" = :produtoId";
 
     private static final RowMapper<CategoriaProdutoEntity> ROW_MAPPER = (rs, rowNum) -> {
@@ -47,6 +48,7 @@ public class CategoriaProdutoRepositoryJdbcImpl implements CategoriaProdutoRepos
                 .toList();
     }
 
+    @Override
     public List<CategoriaProdutoEntity> findByCategoriaId(Integer categoriaId) {
         String SELECT_BY_PRODUCT = SELECT_ALL + " WHERE \"categoriaId\" IN (:categoriaId);";
         return jdbcTemplate.query(SELECT_BY_PRODUCT, Map.of("categoriaId", categoriaId), ROW_MAPPER)
@@ -58,20 +60,35 @@ public class CategoriaProdutoRepositoryJdbcImpl implements CategoriaProdutoRepos
                 .toList();
     }
 
+    @Override
     public List<CategoriaProdutoEntity> findByProdutoIdAndCategoriaId (Integer produtoId, Integer categoriaId) {
         String SELECT_BY_PRODUTO_CATEGORIA = SELECT_ALL + " WHERE \"produtoId\" = :produtoId AND \"categoriaId\" = :categoriaId";
         return jdbcTemplate.query(SELECT_BY_PRODUTO_CATEGORIA, Map.of("produtoId",produtoId, "categoriaId", categoriaId), ROW_MAPPER);
     }
 
+    @Override
     public CategoriaProdutoEntity save(CategoriaProdutoEntity entity) {
         jdbcTemplate.update(INSERT, Map.of("categoriaId", entity.getCategoriaId(),"produtoId", entity.getProdutoId()));
         return entity;
     }
 
-    public int delete(Integer produtoId, Integer categoriaId) {
-        return jdbcTemplate.update(DELETE, Map.of("produtoId", produtoId, "categoriaId", categoriaId));
+    @Override
+    public int deleteByProdutoIdAndCategoriaId(Integer produtoId, Integer categoriaId) {
+        String DELETE_BY_CATEGORIA_AND_PRODUTO = "DELETE FROM public.\"categoriaProduto\" WHERE \"produtoId\" = :produtoId AND \"categoriaId\" = :categoriaId";
+        return jdbcTemplate.update(DELETE_BY_CATEGORIA_AND_PRODUTO, Map.of("produtoId", produtoId, "categoriaId", categoriaId));
     }
 
+    @Override
+    public int deleteByProdutoId(Integer produtoId) {
+        return jdbcTemplate.update(DELETE_BY_PRODUTO, Map.of("produtoId", produtoId));
+    }
+
+    @Override
+    public int deleteByCategoriaId( Integer categoriaId) {
+       return jdbcTemplate.update(DELETE_BY_CATEGORIA, Map.of( "categoriaId", categoriaId));
+    }
+
+    @Override
     public boolean exists(Integer produtoId, Integer categoriaId) {
         Integer count = jdbcTemplate.queryForObject(VERIFY, Map.of("produtoId", produtoId, "categoriaId", categoriaId), Integer.class);
         return count != null && count > 0;

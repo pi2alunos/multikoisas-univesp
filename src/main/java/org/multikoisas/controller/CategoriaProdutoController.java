@@ -40,9 +40,9 @@ public class CategoriaProdutoController {
 
 
     @DeleteMapping
-    public ResponseEntity<Object> delete(@Valid @RequestBody CategoriaProdutoRequest request) {
+    public ResponseEntity<Object> deleteProdutoAndCategoria(@Valid @RequestBody CategoriaProdutoRequest request) {
 
-        boolean response = service.delete(request.getProdutoId(), request.getCategoriaId());
+        boolean response = service.deleteByProdutoIdAndCategoriaId(request.getProdutoId(), request.getCategoriaId());
 
         return response ? ResponseEntity.ok(Map.of("mensagem", "Categoria desassociada do produto com sucesso.")) : ResponseEntity.notFound().build();
     }
