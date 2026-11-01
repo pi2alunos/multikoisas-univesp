@@ -47,6 +47,8 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Já existe um usuário cadastrado com este e-mail.");
         });
 
+        //todo precisa implementar a validação de admin para inserir novos usuarios
+
         // Caminho livre e seguro para salvar
         UserEntity entityToSave = toEntity(request);
         UserEntity savedEntity = userRepository.save(entityToSave);
@@ -71,12 +73,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(String username, UserRequest request) {
 
+        //todo precisa implementar a validação de admin para atualizar ele e os usuarios
+
         UserEntity userToUpdate = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado.")); // 1. Lança erro se não achar
 
         // 2. A Mágica Funcional: Mescla limpa e direta
-        updateIfValid(request.getFirstName(), userToUpdate::setFirstName);
-        updateIfValid(request.getLastName(), userToUpdate::setLastName);
+        updateIfValid(request.getEmail(), userToUpdate::setEmail);
         updateIfValid(request.getPassword(), userToUpdate::setPassword);
 
         // 3. Regra de Negócio Isolada (O E-mail)
@@ -101,9 +104,8 @@ public class UserServiceImpl implements UserService {
         return UserResponse.builder()
                 .id(userEntity.getId())
                 .email(userEntity.getEmail())
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
                 .username(userEntity.getUsername())
+                .role(userEntity.getRole())
                 .build();
     }
 
@@ -111,9 +113,8 @@ public class UserServiceImpl implements UserService {
         return UserEntity.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
                 .username(request.getUsername())
+                .role(request.getRole())
                 .build();
     }
 

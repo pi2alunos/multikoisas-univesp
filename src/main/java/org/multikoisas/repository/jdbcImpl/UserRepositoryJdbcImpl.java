@@ -21,11 +21,11 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    private static final String SELECT_ALL = "SELECT id, \"firstName\", \"lastName\", \"email\", \"password\", \"username\" FROM public.usuario";
+    private static final String SELECT_ALL = "SELECT id, \"email\", \"password\", \"username\", \"role\" FROM public.usuario";
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
-    private static final String UPDATE_USER = "UPDATE public.usuario SET \"firstName\" = :firstName, \"lastName\" = :lastName, \"email\" = :email, \"password\" = :password WHERE \"username\" = :username";
+    private static final String UPDATE_USER = "UPDATE public.usuario SET \"email\" = :email, \"password\" = :password WHERE \"username\" = :username";
     private static final String SELECT_BY_USERNAME = SELECT_ALL + " WHERE \"username\" = :username";
-    private static final String INSERT = "INSERT INTO public.usuario (\"firstName\", \"lastName\", \"email\", \"password\", \"username\") VALUES (:firstName, :lastName, :email, :password, :username)";
+    private static final String INSERT = "INSERT INTO public.usuario (\"email\", \"password\", \"username\", \"role\") VALUES (:email, :password, :username, :role)";
     private static final String DELETE_BY_ID = "DELETE FROM public.usuario WHERE id = :id";
 
 
@@ -33,11 +33,10 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
         UserEntity userEntity = new UserEntity();
         userEntity.setId(rs.getInt("id"));
-        userEntity.setFirstName(rs.getString("firstName"));
-        userEntity.setLastName(rs.getString("lastName"));
         userEntity.setEmail(rs.getString("email"));
         userEntity.setPassword(rs.getString("password"));
         userEntity.setUsername(rs.getString("username"));
+        userEntity.setRole(rs.getString("role"));
 
         return userEntity;
 
