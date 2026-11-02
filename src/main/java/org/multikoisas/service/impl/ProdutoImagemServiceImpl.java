@@ -1,16 +1,17 @@
 package org.multikoisas.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.multikoisas.dto.ProdutoImagemRequest;
 import org.multikoisas.dto.ProdutoImagemResponse;
 import org.multikoisas.entities.ProdutoImagemEntity;
 import org.multikoisas.repository.ProdutoImagemRepository;
+import org.multikoisas.repository.ProdutoRepository;
 import org.multikoisas.service.ProdutoImagemService;
 import org.multikoisas.service.S3StorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,18 +20,22 @@ import java.util.List;
 public class ProdutoImagemServiceImpl implements ProdutoImagemService {
 
     private final ProdutoImagemRepository repository;
+    private final ProdutoRepository produtoRepository;
     private final S3StorageService s3Service; // Injeção da Interface, não da implementação S3!
 
     @Override
     @Transactional // Garante que se o banco falhar, o processo inteiro aborta
-    public ProdutoImagemResponse save(ProdutoImagemRequest request) {
+    public ProdutoImagemResponse save(MultipartFile file, Integer produtoId) {
+
+        // Valida se o produto existe, caso contrário lança 404
+        produtoRepository.findById(produtoId).orElseThrow(() -> new IllegalArgumentException("Produto " + produtoId + " nao encontrado."));
 
         // 1. Envia para a nuvem e recebe a URL (Responsabilidade do StorageService)
-        String publicUrl = s3Service.uploadFile(request.getFile());
+        String publicUrl = s3Service.uploadFile(file);
 
         // 2. Constrói a Entidade com os dados do Request + URL da nuvem
         ProdutoImagemEntity entity = new ProdutoImagemEntity();
-        entity.setProdutoId(request.getProdutoId());
+        entity.setProdutoId(produtoId);
         entity.setImagemUrl(publicUrl);
 
         // 3. Salva no banco de dados (Responsabilidade do Repository)
@@ -72,7 +77,6 @@ public class ProdutoImagemServiceImpl implements ProdutoImagemService {
     }
 
     @Override
-    @Transactional
     public void deleteAllByProdutoId(Integer produtoId) {
         // 1. Busca todas as imagens no banco de dados
         List<ProdutoImagemResponse> imagens = this.findByProdutoId(produtoId);
@@ -83,9 +87,7 @@ public class ProdutoImagemServiceImpl implements ProdutoImagemService {
                 .toList();
 
         // 3. Apaga os registros do banco de dados (Persistência)
-        for (ProdutoImagemResponse imagem : imagens) {
-            repository.deleteById(imagem.getId());
-        }
+            repository.deleteById(produtoId);
 
         // 4. Registra a exclusão na nuvem para ocorrer SOMENTE APÓS o commit do banco
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

@@ -3,14 +3,17 @@ package org.multikoisas.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.ProdutoImagemDeleteRequest;
-import org.multikoisas.dto.ProdutoImagemRequest;
 import org.multikoisas.dto.ProdutoImagemResponse;
 import org.multikoisas.service.ProdutoImagemService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/imagem")
@@ -32,13 +35,18 @@ public class ProdutoImagemController {
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.noContent().build();
     }
 
-    @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<ProdutoImagemResponse> upload(@Valid @ModelAttribute ProdutoImagemRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProdutoImagemResponse> upload(@Valid @RequestPart("file") MultipartFile file,
+                                                        @RequestParam("produtoId") Integer produtoId) {
 
-        ProdutoImagemResponse response = service.save(request);
+        ProdutoImagemResponse response = service.save(file, produtoId);
 
-        if (response == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Erro ao salvar a imagem");
+        }
+
+        if (!Objects.equals(response.getProdutoId(), produtoId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Produto invalido");
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

@@ -9,10 +9,7 @@ import org.multikoisas.dto.ProdutoRequest;
 import org.multikoisas.dto.ProdutoResponse;
 import org.multikoisas.entities.ProdutoEntity;
 import org.multikoisas.repository.ProdutoRepository;
-import org.multikoisas.service.CanalVendaProdutoService;
-import org.multikoisas.service.CategoriaProdutoService;
-import org.multikoisas.service.ProdutoImagemService;
-import org.multikoisas.service.ProdutoService;
+import org.multikoisas.service.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -99,14 +96,18 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Transactional
     public void deletarProdutoComDependencias(Integer produtoId) {
-        // 1. Remove os registros de tabelas "filhas" primeiro
+        System.out.println("1 - Removendo imagens");
         produtoImagemService.deleteAllByProdutoId(produtoId);
 
-        // 2. Chame os métodos de exclusão de outras tabelas relacionadas aqui
-        canalVendaProdutoService.deleteByProdutoId(produtoId); // Exclui todos os registros relacionados ao produto na tabela canal_venda_produto
-        categoriaProdutoService.deleteByProdutoId(produtoId); // Exclui todos os registros relacionados ao produto na tabela categoria_produto
+        System.out.println("2 - Removendo canal venda");
+        canalVendaProdutoService.deleteByProdutoId(produtoId);
 
-        // 3. Por fim, apaga o registro da tabela principal (Produto)
+        System.out.println("3 - Removendo categorias");
+        categoriaProdutoService.deleteByProdutoId(produtoId);
+
+        System.out.println("4 - Removendo produto");
         produtoRepository.deleteById(produtoId);
+
+        System.out.println("5 - Fim");
     }
 }

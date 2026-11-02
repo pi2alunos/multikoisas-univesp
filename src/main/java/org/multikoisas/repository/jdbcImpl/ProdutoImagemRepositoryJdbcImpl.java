@@ -61,6 +61,7 @@ public class ProdutoImagemRepositoryJdbcImpl implements ProdutoImagemRepository 
         jdbcTemplate.update(DELETE_BY_ID, new MapSqlParameterSource("id", id));
     }
 
+
     @Override
     public ProdutoImagemEntity save(ProdutoImagemEntity entity) {
         String INSERT_IMAGEM = INSERT + " RETURNING id";
