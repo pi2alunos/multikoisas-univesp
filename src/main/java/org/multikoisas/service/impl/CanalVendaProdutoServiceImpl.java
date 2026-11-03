@@ -17,22 +17,26 @@ public class CanalVendaProdutoServiceImpl implements CanalVendaProdutoService {
 
     private final CanalVendaProdutoRepository canalVendaProdutoRepository;
 
-    private CanalVendaProdutoResponse toResponse(
-            CanalVendaProdutoEntity canalVendaProdutoEntity) {
-
-        return CanalVendaProdutoResponse.builder()
-                .produtoId(canalVendaProdutoEntity.getProdutoId())
-                .canalVendaId(canalVendaProdutoEntity.getCanalVendaId())
-                .link(canalVendaProdutoEntity.getLink())
-                .build();
-    }
-
     @Override
     public List<CanalVendaProdutoResponse> findAll() {
         return canalVendaProdutoRepository.findAll()
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public List<CanalVendaProdutoResponse> findByProdutoIdOrCanalVendaIdOrAll(Integer produtoId, Integer canalVendaId) {
+        List<CanalVendaProdutoEntity> entity;
+        if (produtoId != null && canalVendaId != null) {
+            entity = List.of(canalVendaProdutoRepository.findByProdutoIdAndCanalId(produtoId, canalVendaId));
+        } else if (produtoId != null) {
+            entity = canalVendaProdutoRepository.findByProdutoId(produtoId);
+        } else if (canalVendaId != null) {
+            entity = canalVendaProdutoRepository.findByCanalVendaId(canalVendaId);
+        } else {
+            entity = canalVendaProdutoRepository.findAll();
+        }
+        return entity.stream().map(this::toResponse).toList();
     }
 
     @Override
@@ -121,5 +125,15 @@ public class CanalVendaProdutoServiceImpl implements CanalVendaProdutoService {
         }
 
         return true;
+    }
+
+    private CanalVendaProdutoResponse toResponse(
+            CanalVendaProdutoEntity canalVendaProdutoEntity) {
+
+        return CanalVendaProdutoResponse.builder()
+                .produtoId(canalVendaProdutoEntity.getProdutoId())
+                .canalVendaId(canalVendaProdutoEntity.getCanalVendaId())
+                .link(canalVendaProdutoEntity.getLink())
+                .build();
     }
 }

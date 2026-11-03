@@ -18,19 +18,15 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    private static final String SELECT_ALL =
-            "SELECT \"canalVendaId\", \"produtoId\", link FROM public.\"canalVendaProduto\"";
+    private static final String SELECT_ALL = "SELECT \"canalVendaId\", \"produtoId\", link FROM public.\"canalVendaProduto\"";
 
-    private static final String INSERT =
-            "INSERT INTO public.\"canalVendaProduto\" (\"canalVendaId\", \"produtoId\", link) " +
+    private static final String INSERT = "INSERT INTO public.\"canalVendaProduto\" (\"canalVendaId\", \"produtoId\", link) " +
                     "VALUES (:canalVendaId, :produtoId, :link)";
 
-    private static final String DELETE_BY_PRODUTO =
-            "DELETE FROM public.\"canalVendaProduto\" " +
+    private static final String DELETE_BY_PRODUTO = "DELETE FROM public.\"canalVendaProduto\" " +
                     "WHERE \"produtoId\" = :produtoId";
 
-    private static final String VERIFY =
-            "SELECT COUNT(*) FROM public.\"canalVendaProduto\" " +
+    private static final String VERIFY = "SELECT COUNT(*) FROM public.\"canalVendaProduto\" " +
                     "WHERE \"canalVendaId\" = :canalVendaId " +
                     "AND \"produtoId\" = :produtoId";
 
@@ -92,10 +88,21 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
                 .map(entity -> CanalVendaProdutoEntity.builder()
                         .canalVendaId(entity.getCanalVendaId())
                         .produtoId(entity.getProdutoId())
+                        .link(entity.getLink())
                         .build())
                 .toList();
     }
 
+    @Override
+    public CanalVendaProdutoEntity findByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId) {
+        String SELECT_BY_CANAL_AND_PRODUTO =
+                SELECT_ALL + " WHERE \"canalVendaId\" IN (:canalVendaId) AND \"produtoId\" IN (:produtoId);";
+
+        return jdbcTemplate.queryForObject(
+                        SELECT_BY_CANAL_AND_PRODUTO,
+                        Map.of("canalVendaId", canalVendaId, "produtoId", produtoId),
+                        ROW_MAPPER);
+    }
 
     @Override
     public CanalVendaProdutoEntity save(CanalVendaProdutoEntity entity) {

@@ -3,7 +3,6 @@ package org.multikoisas.repository.jdbcImpl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.multikoisas.entities.CanalVendaEntity;
 import org.multikoisas.repository.CanalVendaRepository;
@@ -36,20 +35,17 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
     }
 
     @Override
-    public Optional<CanalVendaEntity> findByName(String nome) {
+    public List<CanalVendaEntity> findByName(String nome) {
         String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
-        Map<String, Object> params = new HashMap<>();
-        params.put("nome", nome);
-        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
-        return result.stream().findFirst();
+        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_NAME, ROW_MAPPER);
+        return result;
     }
 
-    public Optional<CanalVendaEntity> findById(Integer id) {
+    public List<CanalVendaEntity> findById(Integer id) {
         String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
-        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_ID, params, ROW_MAPPER);
-        return result.stream().findFirst();
+
+        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_ID, ROW_MAPPER);
+        return result;
     }
 
     @Override

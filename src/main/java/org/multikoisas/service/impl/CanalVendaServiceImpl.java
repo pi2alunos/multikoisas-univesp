@@ -21,11 +21,17 @@ public class CanalVendaServiceImpl implements CanalVendaService {
 
     private final CanalVendaRepository canalVendaRepository;
 
-    private CanalVendaResponse toResponse(CanalVendaEntity entity) {
-        return CanalVendaResponse.builder()
-                .id(entity.getId())
-                .nome(entity.getNome())
-                .build();
+    @Override
+    public List<CanalVendaResponse> findByCanalIdOrByNomeOrAll(Integer canalVendaId, String nome) {
+        List<CanalVendaEntity> entity;
+        if (canalVendaId != null) {
+            entity = canalVendaRepository.findById(canalVendaId);
+        } else if (nome != null && !nome.isBlank()) {
+            entity = canalVendaRepository.findByName(nome);
+        } else {
+            entity = canalVendaRepository.findAll();
+        }
+        return entity.stream().map(this::toResponse).toList();
     }
 
     @Override
@@ -37,27 +43,19 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     }
 
     @Override
-    public CanalVendaResponse findById(Integer id) {
-        CanalVendaEntity entity = canalVendaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal de venda não encontrado"));
-
-        return toResponse(entity);
+    public List<CanalVendaResponse> findById(Integer id) {
+        return canalVendaRepository.findById(id).stream().map(this::toResponse).toList();
     }
 
     @Override
-    public CanalVendaResponse findByName(String nome) {
-        CanalVendaEntity entity = canalVendaRepository.findByName(nome)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Canal de venda não encontrado"));
-
-        return toResponse(entity);
+    public List<CanalVendaResponse> findByName(String nome) {
+        return canalVendaRepository.findByName(nome).stream().map(this::toResponse).toList();
     }
 
     @Override
     public CanalVendaResponse save(CanalVendaRequest request) {
 
-        if (canalVendaRepository.findByName(request.getNome()).isPresent()) {
+        if (canalVendaRepository.findByName(request.getNome()).stream().findFirst().isPresent()) {
             throw new IllegalArgumentException("Já existe um canal com esse nome");
         }
 
@@ -98,5 +96,12 @@ public class CanalVendaServiceImpl implements CanalVendaService {
                     "Não é possível excluir este canal de venda porque ela está associada a um ou mais produtos."
             );
         }
+    }
+
+    private CanalVendaResponse toResponse(CanalVendaEntity entity) {
+        return CanalVendaResponse.builder()
+                .id(entity.getId())
+                .nome(entity.getNome())
+                .build();
     }
 }

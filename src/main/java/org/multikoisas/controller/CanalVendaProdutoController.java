@@ -1,9 +1,10 @@
 package org.multikoisas.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.CanalVendaProdutoRequest;
 import org.multikoisas.dto.CanalVendaProdutoResponse;
-import org.multikoisas.service.impl.CanalVendaProdutoServiceImpl;
+import org.multikoisas.service.CanalVendaProdutoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,52 +16,49 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/canalvendaproduto")
+@RequiredArgsConstructor
 public class CanalVendaProdutoController {
 
-    private final CanalVendaProdutoServiceImpl canalVendaProdutoServiceImpl;
-
-    public CanalVendaProdutoController(
-            CanalVendaProdutoServiceImpl canalVendaProdutoServiceImpl) {
-        this.canalVendaProdutoServiceImpl = canalVendaProdutoServiceImpl;
-    }
+    private final CanalVendaProdutoService canalVendaProdutoService;
 
     @GetMapping
-    public ResponseEntity<List<CanalVendaProdutoResponse>> getCanaisVendaProdutos() {
-        List<CanalVendaProdutoResponse> canaisVendaProdutos =
-                canalVendaProdutoServiceImpl.findAll();
+    public ResponseEntity<List<CanalVendaProdutoResponse>> getCanaisVendaProdutos(
+            @RequestParam(required = false) Integer produtoId,
+            @RequestParam(required = false) Integer canalVendaId) {
+        List<CanalVendaProdutoResponse> response = canalVendaProdutoService.findByProdutoIdOrCanalVendaIdOrAll(produtoId, canalVendaId);
 
-        return ResponseEntity.ok(canaisVendaProdutos);
+        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
     }
 
-    @GetMapping(params = "produto")
-    public ResponseEntity<List<CanalVendaProdutoResponse>> getProduto(
-            @RequestParam("produto") Integer produtoId) {
-
-        List<CanalVendaProdutoResponse> response =
-                canalVendaProdutoServiceImpl.findByProdutoId(produtoId);
-
-        return response.isEmpty()
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(response);
-    }
-
-    @GetMapping(params = "canalVenda")
-    public ResponseEntity<List<CanalVendaProdutoResponse>> getCanalVenda(
-            @RequestParam("canalVenda") Integer canalVendaId) {
-
-        List<CanalVendaProdutoResponse> response =
-                canalVendaProdutoServiceImpl.findByCanalVendaId(canalVendaId);
-
-        return response.isEmpty()
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(response);
-    }
+//    @GetMapping(params = "produto")
+//    public ResponseEntity<List<CanalVendaProdutoResponse>> getProduto(
+//            @RequestParam("produto") Integer produtoId) {
+//
+//        List<CanalVendaProdutoResponse> response =
+//                canalVendaProdutoServiceImpl.findByProdutoId(produtoId);
+//
+//        return response.isEmpty()
+//                ? ResponseEntity.notFound().build()
+//                : ResponseEntity.ok(response);
+//    }
+//
+//    @GetMapping(params = "canalVenda")
+//    public ResponseEntity<List<CanalVendaProdutoResponse>> getCanalVenda(
+//            @RequestParam("canalVenda") Integer canalVendaId) {
+//
+//        List<CanalVendaProdutoResponse> response =
+//                canalVendaProdutoServiceImpl.findByCanalVendaId(canalVendaId);
+//
+//        return response.isEmpty()
+//                ? ResponseEntity.notFound().build()
+//                : ResponseEntity.ok(response);
+//    }
 
     @PostMapping
     public ResponseEntity<Object> save(
             @Valid @RequestBody CanalVendaProdutoRequest request) {
 
-        canalVendaProdutoServiceImpl.save(request);
+        canalVendaProdutoService.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of(
@@ -73,7 +71,7 @@ public class CanalVendaProdutoController {
     public ResponseEntity<Object> deleteProdutoAndCanal(
             @Valid @RequestBody CanalVendaProdutoRequest request) {
 
-        boolean response = canalVendaProdutoServiceImpl.deleteByProdutoIdAndCanalId(
+        boolean response = canalVendaProdutoService.deleteByProdutoIdAndCanalId(
                 request.getProdutoId(),
                 request.getCanalVendaId()
         );

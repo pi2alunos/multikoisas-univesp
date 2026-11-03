@@ -20,19 +20,11 @@ public class CanalVendaController {
     private final CanalVendaService canalVendaService;
 
     @GetMapping
-    public ResponseEntity<List<CanalVendaResponse>> getCanaisVenda() {
-        return ResponseEntity.ok(canalVendaService.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CanalVendaResponse> getCanalVendaById(@PathVariable Integer id) {
-        return ResponseEntity.ok(canalVendaService.findById(id));
-    }
-
-    @GetMapping(params = "nome")
-    public ResponseEntity<CanalVendaResponse> getCanalVendaByName(
-            @RequestParam("nome") String nome) {
-        return ResponseEntity.ok(canalVendaService.findByName(nome));
+    public ResponseEntity<List<CanalVendaResponse>> getCanaisVendaByIdOrByNomeOrAll(
+            @RequestParam(required = false) Integer CanalVendaId,
+            @RequestParam(required = false) String nome) {
+        List<CanalVendaResponse> response = canalVendaService.findByCanalIdOrByNomeOrAll(CanalVendaId, nome);
+        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping

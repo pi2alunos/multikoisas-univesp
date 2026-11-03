@@ -10,9 +10,11 @@ public interface CanalVendaService {
 
     List<CanalVendaResponse> findAll();
 
-    CanalVendaResponse findById(Integer id);
+    List<CanalVendaResponse> findByCanalIdOrByNomeOrAll(Integer canalVendaId, String nome);
 
-    CanalVendaResponse findByName(String nome);
+    List<CanalVendaResponse> findById(Integer id);
+
+    List<CanalVendaResponse> findByName(String nome);
 
     CanalVendaResponse save(CanalVendaRequest request);
 
