@@ -7,14 +7,11 @@ import java.util.List;
 
 public interface SocialNetworkService {
 
+    List<SocialNetworkResponse> getSocialNetworks(String name);
     List<SocialNetworkResponse> findAll();
-
-    SocialNetworkResponse findByName(String name);
-
+    List<SocialNetworkResponse> findByName(String name);
     SocialNetworkResponse save(SocialNetworkRequest request);
-
     SocialNetworkResponse delete(String name);
-
     SocialNetworkResponse update(String name, SocialNetworkRequest request);
 
 }

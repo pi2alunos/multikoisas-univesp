@@ -22,18 +22,18 @@ public class SocialNetworkController {
     private final SocialNetworkService socialService;
 
     @GetMapping
-    public ResponseEntity<List<SocialNetworkResponse>> getSocialNetwork()
+    public ResponseEntity<List<SocialNetworkResponse>> getSocialNetwork(@RequestParam(required = false) String name)
     {
-        List<SocialNetworkResponse> response = socialService.findAll();
-        return response != null? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+        List<SocialNetworkResponse> response = socialService.getSocialNetworks(name);
+        return response.isEmpty()? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{description}")
-    public ResponseEntity<SocialNetworkResponse> getSocialNetworkByName(@PathVariable String description)
-    {
-        SocialNetworkResponse response = socialService.findByName(description);
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
-    }
+//    @GetMapping("/{description}")
+//    public ResponseEntity<SocialNetworkResponse> getSocialNetworkByName(@PathVariable String description)
+//    {
+//        SocialNetworkResponse response = socialService.findByName(description);
+//        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+//    }
 
     @PostMapping
     public ResponseEntity<SocialNetworkResponse> createUser(@Valid @RequestBody SocialNetworkRequest request){

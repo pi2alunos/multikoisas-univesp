@@ -1,7 +1,6 @@
 package org.multikoisas.repository.jdbcImpl;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.multikoisas.entities.SocialNetworkEntity;
 import org.multikoisas.repository.SocialNetworkRepository;
@@ -41,12 +40,12 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
     }
 
     @Override
-    public Optional<SocialNetworkEntity> findByName(String descricao) {
+    public List<SocialNetworkEntity> findByName(String descricao) {
         try{
             SocialNetworkEntity socialNetworkEntity = jdbcTemplate.queryForObject(SELECT_BY_DESCRIPTION, java.util.Map.of("descricao", descricao), ROW_MAPPER);
-            return Optional.of(socialNetworkEntity);
+            return List.of(socialNetworkEntity);
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
-            return Optional.empty();
+            return List.of();
         }
     }
 
@@ -76,7 +75,7 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
             return null;
         }
 
-        SocialNetworkEntity result = entity.get(0);
+        SocialNetworkEntity result = entity.getFirst();
 
         jdbcTemplate.update(DELETE, java.util.Map.of("descricao", descricao));
 

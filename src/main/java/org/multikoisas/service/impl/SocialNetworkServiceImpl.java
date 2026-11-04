@@ -17,6 +17,17 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
 
     private final SocialNetworkRepository socialRepository;
 
+    public List<SocialNetworkResponse> getSocialNetworks(String name) {
+        List<SocialNetworkEntity> socialNetworks;
+        if (name == null || name.trim().isEmpty()) {
+            socialNetworks = socialRepository.findAll();
+        } else {
+            socialNetworks = socialRepository.findByName(name);
+        }
+        return socialNetworks.isEmpty() ? List.of() : socialNetworks.stream().map(this::toResponse).toList();
+    }
+
+    @Override
     public List<SocialNetworkResponse> findAll() {
         return socialRepository.findAll().stream()
                 .map(this::toResponse)
@@ -24,16 +35,16 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     }
 
     @Override
-    public SocialNetworkResponse findByName(String name) {
-        return socialRepository.findByName(name).stream().map(this::toResponse).findFirst().orElse(null);
+    public List<SocialNetworkResponse> findByName(String name) {
+        return socialRepository.findByName(name).stream().map(this::toResponse).toList();
     }
 
     @Override
     public SocialNetworkResponse save(SocialNetworkRequest request) {
 
-        socialRepository.findByName(request.getDescricao()).ifPresent(user -> {
+        if (socialRepository.findByName(request.getDescricao().trim()) != null) {
             throw new IllegalArgumentException("Esta rede social já está cadastrada.");
-        });
+        }
 
         SocialNetworkEntity entityToSave = toEntity(request);
         SocialNetworkEntity savedEntity = socialRepository.save(entityToSave);
@@ -56,7 +67,7 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     @Override
     public SocialNetworkResponse update(String descricao, SocialNetworkRequest request) {
 
-        SocialNetworkEntity socialNetworkToUpdate = socialRepository.findByName(descricao)
+        SocialNetworkEntity socialNetworkToUpdate = socialRepository.findByName(descricao).stream().findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Descrição não encontrado.")); // 1. Lança erro se não achar
 
         // 2. A Mágica Funcional: Mescla limpa e direta
@@ -69,9 +80,9 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
 
         if (novaDescricao != null && !novaDescricao.isBlank() ) {
 
-            socialRepository.findByName(novaDescricao).ifPresent(existingSocialNetwork -> {
+            if (socialRepository.findByName(novaDescricao.trim()) != null) {
                 throw new IllegalArgumentException("Esta rede social já está cadastrada.");
-            });
+            }
 
             socialNetworkToUpdate.setDescricao(novaDescricao);
         }
