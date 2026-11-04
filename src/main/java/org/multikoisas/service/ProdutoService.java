@@ -8,15 +8,11 @@ import org.multikoisas.dto.ProdutoResponse;
 
 public interface ProdutoService {
 
+    List<ProdutoResponse> getProdutos(Integer id);
     List<ProdutoResponse> findAll();
-
     ProdutoResponse findById(Integer id);
-
     ProdutoResponse save(ProdutoRequest request);
-
     boolean update(Integer id, ProdutoRequest request);
-
     boolean deleteById(Integer id);
-
     void deletarProdutoComDependencias(Integer produtoId);
 }

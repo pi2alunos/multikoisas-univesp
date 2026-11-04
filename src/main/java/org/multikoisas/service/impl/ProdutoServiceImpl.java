@@ -32,6 +32,19 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
+    public List<ProdutoResponse> getProdutos(Integer id) {
+        List<ProdutoEntity> entity;
+        if (id == null) {
+            entity = produtoRepository.findAll();
+        } else if(produtoRepository.findById(id).isPresent()) {
+            entity = List.of(produtoRepository.findById(id).get());
+        } else {
+            entity = List.of();
+        }
+        return entity.stream().map(this::toResponse).toList();
+    }
+
+    @Override
     public List<ProdutoResponse> findAll() {
         return produtoRepository.findAll()
                 .stream()

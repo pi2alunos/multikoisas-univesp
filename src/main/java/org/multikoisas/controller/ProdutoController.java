@@ -21,13 +21,9 @@ public class ProdutoController {
     private final ProdutoService produtoService;
 
     @GetMapping
-    public ResponseEntity<List<ProdutoResponse>> getProdutos() {
-        return ResponseEntity.ok(produtoService.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ProdutoResponse> getProdutoById(@PathVariable Integer id) {
-        return ResponseEntity.ok(produtoService.findById(id));
+    public ResponseEntity<List<ProdutoResponse>> getProdutos(@RequestParam(required = false) Integer id) {
+        List<ProdutoResponse> response = produtoService.getProdutos(id);
+        return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping
