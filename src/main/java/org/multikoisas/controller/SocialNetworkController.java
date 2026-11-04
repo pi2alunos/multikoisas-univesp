@@ -28,13 +28,6 @@ public class SocialNetworkController {
         return response.isEmpty()? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/{description}")
-//    public ResponseEntity<SocialNetworkResponse> getSocialNetworkByName(@PathVariable String description)
-//    {
-//        SocialNetworkResponse response = socialService.findByName(description);
-//        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
-//    }
-
     @PostMapping
     public ResponseEntity<SocialNetworkResponse> createUser(@Valid @RequestBody SocialNetworkRequest request){
         // SocialNetworkResponse response = socialService.save(request); //caso queira o retorno do response
