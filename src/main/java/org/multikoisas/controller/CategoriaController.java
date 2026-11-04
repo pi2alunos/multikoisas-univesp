@@ -19,24 +19,18 @@ public class CategoriaController {
     private final CategoriaService categoriaService;
 
     @GetMapping
-    public ResponseEntity<List<CategoriaResponse>> getCategorias() {
-        return ResponseEntity.ok(categoriaService.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CategoriaResponse> getCategoriaById(@PathVariable Integer id) {
-        return ResponseEntity.ok(categoriaService.findById(id));
-    }
-
-    @GetMapping(params = "nome")
-    public ResponseEntity<CategoriaResponse> getCategoriaById(@RequestParam("nome") String nome) {
-        return ResponseEntity.ok(categoriaService.findByName(nome));
+    public ResponseEntity<List<CategoriaResponse>> getCategorias(
+            @RequestParam(required = false) Integer categoriaId,
+            @RequestParam(required = false) String nome) {
+        List<CategoriaResponse> response = categoriaService.findByCategoriaIdOrCategoriaNomeOrAll(categoriaId, nome);
+        return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<CategoriaResponse> createCategoria(@RequestBody CategoriaRequest request) {
         CategoriaResponse response = categoriaService.save(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body(response) :
+                ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @PutMapping("/{id}")

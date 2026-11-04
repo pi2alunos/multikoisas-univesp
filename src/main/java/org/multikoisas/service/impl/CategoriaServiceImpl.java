@@ -31,6 +31,21 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
+    public List<CategoriaResponse> findByCategoriaIdOrCategoriaNomeOrAll (Integer categoriaId, String nome) {
+        List<CategoriaEntity> entity;
+        if (categoriaId == null && nome == null){
+            entity = categoriaRepository.findAll();
+        } else if (categoriaId != null && nome != null) {
+            entity = categoriaRepository.findByCategoriaIdAndCategoriaNome(categoriaId, nome);
+        } else if (categoriaId != null) {
+            entity = categoriaRepository.findById(categoriaId);
+        } else {
+            entity = categoriaRepository.findByName(nome);
+        }
+        return entity.stream().map(this::toResponse).toList();
+    }
+
+    @Override
     public List<CategoriaResponse> findAll() {
         return categoriaRepository.findAll()
                 .stream()
@@ -39,23 +54,19 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    public CategoriaResponse findById(Integer id) {
-        CategoriaEntity entity = categoriaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Categoria nao encontrada"
-                ));
-
-        return toResponse(entity);
+    public List<CategoriaResponse> findById(Integer id) {
+        return categoriaRepository.findById(id)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Override
-    public CategoriaResponse findByName(String nome) {
-        CategoriaEntity entity = categoriaRepository.findByName(nome)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Categoria nao encontrada"));
-        return toResponse(entity);
+    public List<CategoriaResponse> findByName(String nome) {
+        return categoriaRepository.findByName(nome)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Override
@@ -63,9 +74,9 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         validarNome(request.getNome());
 
-        categoriaRepository.findByName(request.getNome()).ifPresent(user -> {
+        if (categoriaRepository.findByName(request.getNome()).stream().findFirst().isPresent()) {
             throw new IllegalArgumentException("Esta categoria já está cadastrada.");
-        });
+        }
 
         CategoriaEntity entityToSave = toEntity(request);
         CategoriaEntity savedEntity = categoriaRepository.save(entityToSave);

@@ -9,14 +9,10 @@ import org.multikoisas.dto.CategoriaResponse;
 public interface CategoriaService {
 
     List<CategoriaResponse> findAll();
-
-    CategoriaResponse findById(Integer id);
-
-    CategoriaResponse findByName(String nome);
-
+    List<CategoriaResponse> findById(Integer id);
+    List<CategoriaResponse> findByName(String nome);
+    List<CategoriaResponse> findByCategoriaIdOrCategoriaNomeOrAll (Integer categoriaId, String nome) ;
     CategoriaResponse save(CategoriaRequest request);
-
     boolean update(Integer id, CategoriaRequest request);
-
     boolean deleteById(Integer id);
 }

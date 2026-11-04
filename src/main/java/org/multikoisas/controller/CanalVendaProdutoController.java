@@ -30,29 +30,6 @@ public class CanalVendaProdutoController {
         return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
     }
 
-//    @GetMapping(params = "produto")
-//    public ResponseEntity<List<CanalVendaProdutoResponse>> getProduto(
-//            @RequestParam("produto") Integer produtoId) {
-//
-//        List<CanalVendaProdutoResponse> response =
-//                canalVendaProdutoServiceImpl.findByProdutoId(produtoId);
-//
-//        return response.isEmpty()
-//                ? ResponseEntity.notFound().build()
-//                : ResponseEntity.ok(response);
-//    }
-//
-//    @GetMapping(params = "canalVenda")
-//    public ResponseEntity<List<CanalVendaProdutoResponse>> getCanalVenda(
-//            @RequestParam("canalVenda") Integer canalVendaId) {
-//
-//        List<CanalVendaProdutoResponse> response =
-//                canalVendaProdutoServiceImpl.findByCanalVendaId(canalVendaId);
-//
-//        return response.isEmpty()
-//                ? ResponseEntity.notFound().build()
-//                : ResponseEntity.ok(response);
-//    }
 
     @PostMapping
     public ResponseEntity<Object> save(

@@ -3,7 +3,6 @@ package org.multikoisas.repository.jdbcImpl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.multikoisas.entities.CategoriaEntity;
 import org.multikoisas.repository.CategoriaRepository;
@@ -33,22 +32,29 @@ public class CategoriaRepositoryJdbcImpl implements CategoriaRepository {
     }
 
     @Override
-    public Optional<CategoriaEntity> findById(Integer id) {
+    public List<CategoriaEntity> findById(Integer id) {
         String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        List<CategoriaEntity> result = jdbcTemplate.query(SELECT_BY_ID, params, ROW_MAPPER);
-        return result.stream().findFirst();
+        return jdbcTemplate.query(SELECT_BY_ID, params, ROW_MAPPER);
     }
 
     @Override
-    public Optional<CategoriaEntity> findByName(String nome) {
+    public List<CategoriaEntity> findByName(String nome) {
 
         Map<String, Object> params = new HashMap<>();
         params.put("nome", nome);
         String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
-        List<CategoriaEntity> result = jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
-        return result.stream().findFirst();
+        return jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
+    }
+
+    @Override
+    public List<CategoriaEntity> findByCategoriaIdAndCategoriaNome(Integer categoriaId, String nome) {
+        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND nome = :nome";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", categoriaId);
+        params.put("nome", nome);
+        return jdbcTemplate.query(SELECT_BY_ID_AND_NAME, params, ROW_MAPPER);
     }
 
     @Override

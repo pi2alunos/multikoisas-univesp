@@ -25,14 +25,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     private final CanalVendaProdutoService canalVendaProdutoService;
     private final CategoriaProdutoService categoriaProdutoService;
 
-    private ProdutoResponse toResponse(ProdutoEntity entity) {
-        return ProdutoResponse.builder()
-                .id(entity.getId())
-                .nome(entity.getNome())
-                .descricaoProduto(entity.getDescricaoProduto())
-                .build();
-    }
-
     private void validar(ProdutoRequest request) {
         if (request == null || request.getNome() == null || request.getNome().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"O nome do produto é obrigatório");
@@ -109,5 +101,13 @@ public class ProdutoServiceImpl implements ProdutoService {
         produtoRepository.deleteById(produtoId);
 
         System.out.println("5 - Fim");
+    }
+
+    private ProdutoResponse toResponse(ProdutoEntity entity) {
+        return ProdutoResponse.builder()
+                .id(entity.getId())
+                .nome(entity.getNome())
+                .descricaoProduto(entity.getDescricaoProduto())
+                .build();
     }
 }
