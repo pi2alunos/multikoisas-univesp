@@ -23,16 +23,9 @@ public class ProdutoImagemController {
     private final ProdutoImagemService service;
 
     @GetMapping
-    public ResponseEntity<List<ProdutoImagemResponse>> findAll() {
-        List<ProdutoImagemResponse> response = service.findAll();
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{produtoId}")
-    public ResponseEntity<List<ProdutoImagemResponse>> findByProdutoId(@PathVariable Integer produtoId) {
-        List<ProdutoImagemResponse> response = service.findByProdutoId(produtoId);
-
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.noContent().build();
+    public ResponseEntity<List<ProdutoImagemResponse>> getProdutos(@RequestParam(required = false) Integer produtoId) {
+        List<ProdutoImagemResponse> response = service.getProdutos(produtoId);
+        return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

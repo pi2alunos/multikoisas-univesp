@@ -66,6 +66,18 @@ public class ProdutoImagemServiceImpl implements ProdutoImagemService {
         return toResponse(entity);
     }
 
+    public List<ProdutoImagemResponse> getProdutos(Integer produtoId) {
+        List<ProdutoImagemEntity> entity;
+        if (produtoId == null) {
+            entity = repository.findAll();
+        } else if(repository.findByProdutoId(produtoId) != null) {
+            entity = repository.findByProdutoId(produtoId);
+        } else {
+            entity = null;
+        }
+        return entity != null ? entity.stream().map(this::toResponse).toList() : null;
+    }
+
     @Override
     public List<ProdutoImagemResponse> findAll() {
         return repository.findAll().stream().map(this::toResponse).toList();
