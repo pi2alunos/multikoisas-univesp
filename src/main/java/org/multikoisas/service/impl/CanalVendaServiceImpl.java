@@ -22,10 +22,10 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     private final CanalVendaRepository canalVendaRepository;
 
     @Override
-    public List<CanalVendaResponse> findByCanalIdOrByNomeOrAll(Integer canalVendaId, String nome) {
+    public List<CanalVendaResponse> findByCanalIdOrByNomeOrAll(Integer id, String nome) {
         List<CanalVendaEntity> entity;
-        if (canalVendaId != null) {
-            entity = canalVendaRepository.findById(canalVendaId);
+        if (id != null) {
+            entity = canalVendaRepository.findById(id);
         } else if (nome != null && !nome.isBlank()) {
             entity = canalVendaRepository.findByName(nome);
         } else {

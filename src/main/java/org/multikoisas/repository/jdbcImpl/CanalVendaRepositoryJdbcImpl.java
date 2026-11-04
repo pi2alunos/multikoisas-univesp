@@ -37,15 +37,12 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
     @Override
     public List<CanalVendaEntity> findByName(String nome) {
         String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
-        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_NAME, ROW_MAPPER);
-        return result;
+        return jdbcTemplate.query(SELECT_BY_NAME, Map.of("nome", nome), ROW_MAPPER);
     }
 
     public List<CanalVendaEntity> findById(Integer id) {
         String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
-
-        List<CanalVendaEntity> result = jdbcTemplate.query(SELECT_BY_ID, ROW_MAPPER);
-        return result;
+        return jdbcTemplate.query(SELECT_BY_ID, Map.of("id", id), ROW_MAPPER);
     }
 
     @Override

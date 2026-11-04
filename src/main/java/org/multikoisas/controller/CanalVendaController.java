@@ -21,10 +21,10 @@ public class CanalVendaController {
 
     @GetMapping
     public ResponseEntity<List<CanalVendaResponse>> getCanaisVendaByIdOrByNomeOrAll(
-            @RequestParam(required = false) Integer CanalVendaId,
+            @RequestParam(required = false) Integer id,
             @RequestParam(required = false) String nome) {
-        List<CanalVendaResponse> response = canalVendaService.findByCanalIdOrByNomeOrAll(CanalVendaId, nome);
-        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
+        List<CanalVendaResponse> response = canalVendaService.findByCanalIdOrByNomeOrAll(id, nome);
+        return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping
