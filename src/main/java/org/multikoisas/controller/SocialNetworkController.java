@@ -29,12 +29,12 @@ public class SocialNetworkController {
     }
 
     @PostMapping
-    public ResponseEntity<SocialNetworkResponse> createUser(@Valid @RequestBody SocialNetworkRequest request){
+    public ResponseEntity<Object> createUser(@Valid @RequestBody SocialNetworkRequest request){
         // SocialNetworkResponse response = socialService.save(request); //caso queira o retorno do response
         // return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         SocialNetworkResponse response = socialService.save(request);
-        return response != null ? ResponseEntity.status(HttpStatus.CREATED).build() : ResponseEntity.noContent().build();// retorna o 201 Created com o usuário criado
+        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body("Rede social cadastrada com sucesso") : ResponseEntity.noContent().build();// retorna o 201 Created com o usuário criado
     }
 
     @DeleteMapping("/{description}")

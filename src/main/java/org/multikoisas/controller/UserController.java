@@ -30,12 +30,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request){
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserRequest request){
         // UserResponse response = userService.save(request); //caso queira o retorno do response
         // return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         UserResponse response = userService.save(request);
-        return response != null ? ResponseEntity.status(HttpStatus.CREATED).build() : ResponseEntity.noContent().build();
+
+        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body("usuario cadastrado com sucesso") : ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{username}")
