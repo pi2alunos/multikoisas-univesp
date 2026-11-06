@@ -42,7 +42,7 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     @Override
     public SocialNetworkResponse save(SocialNetworkRequest request) {
 
-        if (socialRepository.findByName(request.getDescricao().trim()) != null) {
+        if (socialRepository.existsByNameIgnoreCase(request.getDescricao())) {
             throw new IllegalArgumentException("Esta rede social já está cadastrada.");
         }
 

@@ -7,13 +7,10 @@ import java.util.List;
 public interface SocialNetworkRepository {
 
     List<SocialNetworkEntity> findAll();
-
+    boolean existsByNameIgnoreCase(String descricao);
     List<SocialNetworkEntity> findByName(String descricao);
-
     SocialNetworkEntity save(SocialNetworkEntity entity);
-
     SocialNetworkEntity delete(String descricao);
-
     void update(SocialNetworkEntity entity);
 
 

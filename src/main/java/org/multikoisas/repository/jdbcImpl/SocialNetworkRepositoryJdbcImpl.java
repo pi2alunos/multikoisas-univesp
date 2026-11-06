@@ -33,6 +33,12 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
     };
 
     @Override
+    public boolean existsByNameIgnoreCase(String descricao) {
+        String SELECT_EXISTS = "SELECT EXISTS(SELECT 1 FROM public.\"redesSociais\" WHERE LOWER(descricao) = LOWER(:descricao))";
+        return jdbcTemplate.queryForObject(SELECT_EXISTS, java.util.Map.of("descricao", descricao), Boolean.class);
+    }
+
+    @Override
     public List<SocialNetworkEntity> findAll(){
 
         return jdbcTemplate.query(SELECT_ALL, ROW_MAPPER);

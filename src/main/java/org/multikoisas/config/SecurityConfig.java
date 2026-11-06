@@ -31,7 +31,7 @@ public class SecurityConfig {
 
                             // 1. ENDPOINTS LIVRES (Públicos)
                             // Libera rota de login para que o admin consiga se autenticar
-                            .requestMatchers(HttpMethod.POST, "/api/auth/**", "/auth/**").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
 
                             // Libera documentação do Swagger para visualização
                             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
