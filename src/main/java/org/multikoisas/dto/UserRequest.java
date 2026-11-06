@@ -13,10 +13,10 @@ public class UserRequest {
 
     @NotBlank(message = "O campo email e obrigatorio")
     private String email;
-    @NotBlank(message = "O campo password e obrigatoria")
-    private String password;
     @NotBlank(message = "O campo username e obrigatorio")
     private String username;
+    @NotBlank(message = "O campo password e obrigatoria")
+    private String password;
     @NotBlank(message="o campo role e obrigatorio")
     private String role;
 

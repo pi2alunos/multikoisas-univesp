@@ -6,6 +6,7 @@ import org.multikoisas.dto.UserRequest;
 import org.multikoisas.dto.UserResponse;
 import org.multikoisas.entities.UserEntity;
 import org.multikoisas.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.multikoisas.repository.UserRepository;
 
@@ -17,6 +18,19 @@ import java.util.function.Consumer;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public List<UserResponse> getUsers(Integer id, String username) {
+        List<UserEntity> entity;
+        if(id != null) {
+            entity = userRepository.findById(id).stream().toList();
+        } else if (username != null && !username.trim().isEmpty()) {
+            entity = userRepository.findByUsername(username).stream().toList();
+        } else {
+            entity = userRepository.findAll();
+        }
+        return entity.isEmpty() ? List.of() : entity.stream().map(this::toResponse).toList();
+    }
 
     @Override
     public List<UserResponse> findAll() {
@@ -47,14 +61,17 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Já existe um usuário cadastrado com este e-mail.");
         });
 
-        //todo precisa implementar a validação de admin para inserir novos usuarios
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
-        // Caminho livre e seguro para salvar
-        UserEntity entityToSave = toEntity(request);
+        UserEntity entityToSave = UserEntity.builder()
+                .email(request.getEmail())
+                .password(encryptedPassword) // <-- Inserir o hash aqui
+                .username(request.getUsername())
+                .role(request.getRole())
+                .build();
+
         UserEntity savedEntity = userRepository.save(entityToSave);
-
         return toResponse(savedEntity);
-
     }
 
     @Override

@@ -11,8 +11,8 @@ import lombok.*;
 public class UserResponse {
 
     private Integer id;
-    private String email;
     private String username;
+    private String email;
     private String role;
 
 }

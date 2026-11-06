@@ -23,21 +23,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getUser(){
-        List<UserResponse> response = userService.findAll();
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping(params = "id")
-    public ResponseEntity<UserResponse> getUserById(@RequestParam("id") Integer id){
-        UserResponse response =  userService.findById(id);
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/{username}")
-    public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username){
-        UserResponse response =  userService.findByUsername(username);
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+    public ResponseEntity<List<UserResponse>> getUsers(@RequestParam(required = false) Integer id,
+                                                       @RequestParam(required = false) String username){
+        List<UserResponse> response = userService.getUsers(id, username);
+        return response.isEmpty() ? ResponseEntity.notFound().build(): ResponseEntity.ok(response);
     }
 
     @PostMapping
