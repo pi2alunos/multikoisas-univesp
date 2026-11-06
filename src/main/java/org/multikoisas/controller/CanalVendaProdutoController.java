@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/canalvendaproduto")
@@ -22,12 +23,12 @@ public class CanalVendaProdutoController {
     private final CanalVendaProdutoService canalVendaProdutoService;
 
     @GetMapping
-    public ResponseEntity<?> getCanaisVendaProdutos(
+    public ResponseEntity<List<CanalVendaProdutoResponse>> getCanaisVendaProdutos(
             @RequestParam(required = false) Integer produtoId,
             @RequestParam(required = false) Integer canalVendaId) {
         List<CanalVendaProdutoResponse> response = canalVendaProdutoService.findByProdutoIdOrCanalVendaIdOrAll(produtoId, canalVendaId);
 
-        return response.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Canal de venda e/ou produto nao encontrado") : ResponseEntity.ok(response);
+        return response.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).build() : ResponseEntity.ok(response);
     }
 
 
@@ -92,5 +93,12 @@ public class CanalVendaProdutoController {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNoSuchElementException(
+            NoSuchElementException ex) {
 
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
 }

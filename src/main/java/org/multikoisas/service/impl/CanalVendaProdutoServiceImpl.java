@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,18 +26,25 @@ public class CanalVendaProdutoServiceImpl implements CanalVendaProdutoService {
                 .toList();
     }
 
+    @Override
     public List<CanalVendaProdutoResponse> findByProdutoIdOrCanalVendaIdOrAll(Integer produtoId, Integer canalVendaId) {
         List<CanalVendaProdutoEntity> entity;
         if (produtoId != null && canalVendaId != null) {
             entity = canalVendaProdutoRepository.findByProdutoIdAndCanalId(produtoId, canalVendaId);
+            validarLista(entity, "Produto e/ou canal de venda inexistentes. Verifique os IDs informados.");
         } else if (produtoId != null) {
             entity = canalVendaProdutoRepository.findByProdutoId(produtoId);
+            validarLista(entity, "Produto inexistente. Verifique o ID informado.");
         } else if (canalVendaId != null) {
             entity = canalVendaProdutoRepository.findByCanalVendaId(canalVendaId);
+            validarLista(entity, "Canal de venda inexistente. Verifique o ID informado.");
         } else {
             entity = canalVendaProdutoRepository.findAll();
         }
-        return entity.stream().map(this::toResponse).toList();
+
+        return entity.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Override
@@ -135,5 +143,12 @@ public class CanalVendaProdutoServiceImpl implements CanalVendaProdutoService {
                 .canalVendaId(canalVendaProdutoEntity.getCanalVendaId())
                 .link(canalVendaProdutoEntity.getLink())
                 .build();
+    }
+
+    private <T> List<T> validarLista(List<T> lista, String mensagem) {
+        if (lista.isEmpty()) {
+            throw new NoSuchElementException(mensagem);
+        }
+        return lista;
     }
 }
