@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CanalVendaProdutoRepository {
 
-    CanalVendaProdutoEntity findByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId);
+    List<CanalVendaProdutoEntity> findByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId);
     List<CanalVendaProdutoEntity> findAll();
     List<CanalVendaProdutoEntity> findByProdutoId(Integer id);
     List<CanalVendaProdutoEntity> findByCanalVendaId(Integer id);

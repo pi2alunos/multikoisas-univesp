@@ -22,12 +22,12 @@ public class CanalVendaProdutoController {
     private final CanalVendaProdutoService canalVendaProdutoService;
 
     @GetMapping
-    public ResponseEntity<List<CanalVendaProdutoResponse>> getCanaisVendaProdutos(
+    public ResponseEntity<?> getCanaisVendaProdutos(
             @RequestParam(required = false) Integer produtoId,
             @RequestParam(required = false) Integer canalVendaId) {
         List<CanalVendaProdutoResponse> response = canalVendaProdutoService.findByProdutoIdOrCanalVendaIdOrAll(produtoId, canalVendaId);
 
-        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
+        return response.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Canal de venda e/ou produto nao encontrado") : ResponseEntity.ok(response);
     }
 
 

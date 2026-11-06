@@ -56,20 +56,13 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
     public List<CanalVendaProdutoEntity> findByProdutoId(Integer produtoId) {
 
         String SELECT_BY_PRODUCT =
-                SELECT_ALL + " WHERE \"produtoId\" IN (:produtoId);";
+                SELECT_ALL + " WHERE \"produtoId\" = :produtoId";
 
         return jdbcTemplate.query(
                         SELECT_BY_PRODUCT,
                         Map.of("produtoId", produtoId),
                         ROW_MAPPER
-                )
-                .stream()
-                .map(entity -> CanalVendaProdutoEntity.builder()
-                        .canalVendaId(entity.getCanalVendaId())
-                        .produtoId(entity.getProdutoId())
-                        .link(entity.getLink())
-                        .build())
-                .toList();
+                );
     }
 
 
@@ -77,28 +70,21 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
     public List<CanalVendaProdutoEntity> findByCanalVendaId(Integer canalVendaId) {
 
         String SELECT_BY_CANAL_VENDA =
-                SELECT_ALL + " WHERE \"canalVendaId\" IN (:canalVendaId);";
+                SELECT_ALL + " WHERE \"canalVendaId\" = :canalVendaId;";
 
         return jdbcTemplate.query(
                         SELECT_BY_CANAL_VENDA,
                         Map.of("canalVendaId", canalVendaId),
                         ROW_MAPPER
-                )
-                .stream()
-                .map(entity -> CanalVendaProdutoEntity.builder()
-                        .canalVendaId(entity.getCanalVendaId())
-                        .produtoId(entity.getProdutoId())
-                        .link(entity.getLink())
-                        .build())
-                .toList();
+                );
     }
 
     @Override
-    public CanalVendaProdutoEntity findByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId) {
+    public List<CanalVendaProdutoEntity> findByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId) {
         String SELECT_BY_CANAL_AND_PRODUTO =
-                SELECT_ALL + " WHERE \"canalVendaId\" IN (:canalVendaId) AND \"produtoId\" IN (:produtoId);";
+                SELECT_ALL + " WHERE \"produtoId\" = :produtoId AND \"canalVendaId\" = :canalVendaId;";
 
-        return jdbcTemplate.queryForObject(
+        return jdbcTemplate.query(
                         SELECT_BY_CANAL_AND_PRODUTO,
                         Map.of("canalVendaId", canalVendaId, "produtoId", produtoId),
                         ROW_MAPPER);

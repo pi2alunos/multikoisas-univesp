@@ -28,7 +28,7 @@ public class CanalVendaProdutoServiceImpl implements CanalVendaProdutoService {
     public List<CanalVendaProdutoResponse> findByProdutoIdOrCanalVendaIdOrAll(Integer produtoId, Integer canalVendaId) {
         List<CanalVendaProdutoEntity> entity;
         if (produtoId != null && canalVendaId != null) {
-            entity = List.of(canalVendaProdutoRepository.findByProdutoIdAndCanalId(produtoId, canalVendaId));
+            entity = canalVendaProdutoRepository.findByProdutoIdAndCanalId(produtoId, canalVendaId);
         } else if (produtoId != null) {
             entity = canalVendaProdutoRepository.findByProdutoId(produtoId);
         } else if (canalVendaId != null) {

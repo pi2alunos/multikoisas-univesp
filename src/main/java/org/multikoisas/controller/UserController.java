@@ -23,10 +23,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getUsers(@RequestParam(required = false) Integer id,
-                                                       @RequestParam(required = false) String username){
+    public ResponseEntity<?> getUsers(@RequestParam(required = false) Integer id,
+                                                  @RequestParam(required = false) String username){
         List<UserResponse> response = userService.getUsers(id, username);
-        return response.isEmpty() ? ResponseEntity.notFound().build(): ResponseEntity.ok(response);
+        return response.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("usuario nao encontrado"): ResponseEntity.ok(response);
     }
 
     @PostMapping
