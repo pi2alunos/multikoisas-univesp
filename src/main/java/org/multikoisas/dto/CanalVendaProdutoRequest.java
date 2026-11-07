@@ -1,6 +1,5 @@
 package org.multikoisas.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -15,6 +14,5 @@ public class CanalVendaProdutoRequest {
     private Integer produtoId;
     @NotNull(message = "o campo canalVendaId e obrigatorio")
     private Integer canalVendaId;
-    @NotBlank(message = "o campo link e obrigatorio")
     private String link;
 }
