@@ -1,6 +1,7 @@
 
 package org.multikoisas.repository.jdbcImpl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,8 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
 
     private static final String DELETE_BY_CANAL = "DELETE FROM public.\"canalVendaProduto\" " +
             "WHERE \"canalVendaId\" = :canalVendaId";
+
+    private static final String UPDATE = "UPDATE public.\"canalVendaProduto\" SET link = :link WHERE \"canalVendaId\" = :canalVendaId AND \"produtoId\" = :produtoId";
 
 
     private static final RowMapper<CanalVendaProdutoEntity> ROW_MAPPER = (rs, rowNum) -> {
@@ -136,6 +139,18 @@ public class CanalVendaProdutoRepositoryJdbcImpl implements CanalVendaProdutoRep
                         "canalVendaId", canalVendaId
                 )
         );
+    }
+
+    public CanalVendaProdutoEntity updateLink(Integer produtoId, Integer canalVendaId, String link) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("produtoId", produtoId);
+        params.put("canalVendaId", canalVendaId);
+        params.put("link", link);
+        jdbcTemplate.update(
+                UPDATE,
+                params
+        );
+        return findByProdutoIdAndCanalId(produtoId, canalVendaId).getFirst();
     }
 
 

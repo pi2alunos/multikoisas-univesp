@@ -14,5 +14,6 @@ public interface CanalVendaProdutoRepository {
     int deleteByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId);
     int deleteByProdutoId(Integer produtoId);
     int deleteByCanalId(Integer canalVendaId);
+    CanalVendaProdutoEntity updateLink(Integer produtoId, Integer canalVendaId, String link);
     boolean exists(Integer produtoId, Integer canalVendaId);
 }

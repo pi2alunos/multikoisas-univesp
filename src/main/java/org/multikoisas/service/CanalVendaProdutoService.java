@@ -15,6 +15,7 @@ public interface CanalVendaProdutoService {
     boolean deleteByProdutoIdAndCanalId(Integer produtoId, Integer canalVendaId);
     boolean deleteByProdutoId(Integer produtoId);
     boolean deleteByCanalId(Integer canalVendaId);
+    CanalVendaProdutoResponse updateLink(Integer produtoId, Integer canalVendaId, String link);
 
 
 }

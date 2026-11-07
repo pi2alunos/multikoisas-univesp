@@ -135,6 +135,24 @@ public class CanalVendaProdutoServiceImpl implements CanalVendaProdutoService {
         return true;
     }
 
+    public CanalVendaProdutoResponse updateLink(Integer produtoId, Integer canalVendaId, String link) {
+
+        if (!canalVendaProdutoRepository.exists(produtoId, canalVendaId)) {
+            throw new IllegalArgumentException(
+                    "O vínculo entre este produto e canal de venda não existe."
+            );
+        }
+
+        CanalVendaProdutoEntity updatedEntity = canalVendaProdutoRepository.updateLink(produtoId, canalVendaId, link);
+
+        CanalVendaProdutoEntity entity = new CanalVendaProdutoEntity();
+        entity.setProdutoId(updatedEntity.getProdutoId());
+        entity.setCanalVendaId(updatedEntity.getCanalVendaId());
+        entity.setLink(updatedEntity.getLink());
+
+        return toResponse(entity);
+    }
+
     private CanalVendaProdutoResponse toResponse(
             CanalVendaProdutoEntity canalVendaProdutoEntity) {
 

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.CanalVendaProdutoRequest;
 import org.multikoisas.dto.CanalVendaProdutoResponse;
+import org.multikoisas.dto.LinkRequest;
 import org.multikoisas.service.CanalVendaProdutoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,25 @@ public class CanalVendaProdutoController {
                 Map.of(
                         "mensagem",
                         "Canal de venda desassociado do produto com sucesso."
+                )
+        )
+                : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Object> updateLink(@RequestParam Integer produtoId, @RequestParam Integer canalVendaId,  @RequestBody LinkRequest link) {
+
+        CanalVendaProdutoResponse response = canalVendaProdutoService.updateLink(
+                produtoId,
+                canalVendaId,
+                link.getLink()
+        );
+
+        return response != null
+                ? ResponseEntity.ok(
+                Map.of(
+                        "mensagem",
+                        "Link atualizado com sucesso.", "dados", response
                 )
         )
                 : ResponseEntity.notFound().build();
