@@ -101,14 +101,19 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Transactional
     public void deletarProdutoComDependencias(Integer produtoId) {
-        System.out.println("1 - Removendo imagens");
-        produtoImagemService.deleteAllByProdutoId(produtoId);
 
-        System.out.println("2 - Removendo canal venda");
-        canalVendaProdutoService.deleteByProdutoId(produtoId);
-
-        System.out.println("3 - Removendo categorias");
-        categoriaProdutoService.deleteByProdutoId(produtoId);
+        if (!produtoImagemService.findByProdutoId(produtoId).isEmpty()) {
+            System.out.println("1 - Removendo imagem(ns)");
+            produtoImagemService.deleteAllByProdutoId(produtoId);
+        }
+        if (!canalVendaProdutoService.findByProdutoId(produtoId).isEmpty()) {
+            System.out.println("2 - Removendo canal venda");
+            canalVendaProdutoService.deleteByProdutoId(produtoId);
+        }
+        if (!categoriaProdutoService.findByProdutoId(produtoId).isEmpty()) {
+            System.out.println("3 - Removendo categorias");
+            categoriaProdutoService.deleteByProdutoId(produtoId);
+        }
 
         System.out.println("4 - Removendo produto");
         produtoRepository.deleteById(produtoId);
