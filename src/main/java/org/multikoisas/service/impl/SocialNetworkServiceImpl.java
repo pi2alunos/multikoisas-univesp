@@ -9,7 +9,6 @@ import org.multikoisas.service.SocialNetworkService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -65,29 +64,19 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     }
 
     @Override
-    public SocialNetworkResponse update(String descricao, SocialNetworkRequest request) {
+    public SocialNetworkResponse update(String description, String link) {
 
-        SocialNetworkEntity socialNetworkToUpdate = socialRepository.findByName(descricao).stream().findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Descrição não encontrado.")); // 1. Lança erro se não achar
+        SocialNetworkEntity socialNetworkToUpdate = socialRepository.findByName(description).stream().findFirst().isPresent()
+                ? socialRepository.findByName(description).stream().findFirst().get()
+                : null;
 
-        // 2. A Mágica Funcional: Mescla limpa e direta
-        updateIfValid(request.getDescricao(), socialNetworkToUpdate::setDescricao);
-        updateIfValid(request.getLink(), socialNetworkToUpdate::setLink);
-
-        // 3. Regra de Negócio Isolada (O E-mail)
-        // O e-mail continua precisando de um bloco próprio porque requer validação no banco de dados.
-        String novaDescricao = request.getDescricao();
-
-        if (novaDescricao != null && !novaDescricao.isBlank() ) {
-
-            if (socialRepository.findByName(novaDescricao.trim()) != null) {
-                throw new IllegalArgumentException("Esta rede social já está cadastrada.");
-            }
-
-            socialNetworkToUpdate.setDescricao(novaDescricao);
+        if (socialNetworkToUpdate == null) {
+            return null;
         }
 
-        // 4. Gravação e Retorno
+        socialNetworkToUpdate.setLink(link);
+
+        // Gravação e Retorno
         socialRepository.update(socialNetworkToUpdate);
         return toResponse(socialNetworkToUpdate);
 
@@ -110,11 +99,4 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
                 .link(socialNetworkRequest.getLink())
                 .build();
     }
-
-    private void updateIfValid(String novoValor, Consumer<String> atualizador) {
-        if (novoValor != null && !novoValor.isBlank()) {
-            atualizador.accept(novoValor);
-        }
-    }
-
 }

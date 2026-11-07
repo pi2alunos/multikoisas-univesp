@@ -2,6 +2,7 @@ package org.multikoisas.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.multikoisas.dto.LinkRequest;
 import org.multikoisas.dto.SocialNetworkRequest;
 import org.multikoisas.dto.SocialNetworkResponse;
 import org.multikoisas.service.SocialNetworkService;
@@ -46,9 +47,9 @@ public class SocialNetworkController {
     }
 
     @PutMapping("/{description}")
-    public ResponseEntity<SocialNetworkResponse> updateSocialNetwork(@PathVariable String description, @RequestBody SocialNetworkRequest request) {
-        SocialNetworkResponse response = socialService.update(description, request);
-        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+    public ResponseEntity<Object> updateSocialNetwork(@PathVariable String description, @RequestBody LinkRequest request) {
+        SocialNetworkResponse response = socialService.update(description, request.getLink());
+        return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Rede social atualizada com sucesso", "dados", response)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Rede social nao encontrada"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

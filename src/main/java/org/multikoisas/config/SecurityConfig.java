@@ -72,7 +72,7 @@ public class SecurityConfig {
                                     "/canalvenda/**",
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
-                                    "/produto/**").hasRole("ADMIN")
+                                    "/produto/**").permitAll()//hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.DELETE,

@@ -12,6 +12,6 @@ public interface SocialNetworkService {
     List<SocialNetworkResponse> findByName(String name);
     SocialNetworkResponse save(SocialNetworkRequest request);
     SocialNetworkResponse delete(String name);
-    SocialNetworkResponse update(String name, SocialNetworkRequest request);
+    SocialNetworkResponse update(String description, String link);
 
 }
