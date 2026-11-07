@@ -29,7 +29,7 @@ public class ProdutoImagemController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProdutoImagemResponse> upload(@Valid @RequestPart("file") MultipartFile file,
+    public ResponseEntity<ProdutoImagemResponse> upload(@RequestPart("file") MultipartFile file,
                                                         @RequestParam("produtoId") Integer produtoId) {
 
         ProdutoImagemResponse response = service.save(file, produtoId);

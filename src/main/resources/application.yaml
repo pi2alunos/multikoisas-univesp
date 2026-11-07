@@ -9,6 +9,10 @@ spring:
     hikari:
       maximum-pool-size: 10
       keepaliveTime: 300000 # 5 minutes
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 springdoc:
   api-docs:

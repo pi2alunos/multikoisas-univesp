@@ -7,13 +7,16 @@ import org.multikoisas.repository.ProdutoImagemRepository;
 import org.multikoisas.repository.ProdutoRepository;
 import org.multikoisas.service.ProdutoImagemService;
 import org.multikoisas.service.S3StorageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +25,13 @@ public class ProdutoImagemServiceImpl implements ProdutoImagemService {
     private final ProdutoImagemRepository repository;
     private final ProdutoRepository produtoRepository;
     private final S3StorageService s3Service; // Injeção da Interface, não da implementação S3!
+    private static final long TAMANHO_MAXIMO = 5 * 1024 * 1024; // 5MB
 
     @Override
     @Transactional // Garante que se o banco falhar, o processo inteiro aborta
     public ProdutoImagemResponse save(MultipartFile file, Integer produtoId) {
+
+        validarImagem(file);
 
         // Valida se o produto existe, caso contrário lança 404
         produtoRepository.findById(produtoId).orElseThrow(() -> new IllegalArgumentException("Produto " + produtoId + " nao encontrado."));
@@ -117,6 +123,30 @@ public class ProdutoImagemServiceImpl implements ProdutoImagemService {
                 }
             }
         });
+    }
+
+    private void validarImagem(MultipartFile file) {
+
+        Set<String> tiposPermitidos = Set.of(
+                "image/jpg",
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+        );
+
+        if (file.getSize() > TAMANHO_MAXIMO) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "A imagem deve ter no máximo 5 MB"
+            );
+        }
+
+        if (!tiposPermitidos.contains(file.getContentType())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Envie uma imagem JPG/JPEG, PNG ou WebP"
+            );
+        }
     }
 
     public ProdutoImagemResponse toResponse(ProdutoImagemEntity entity) {
