@@ -6,15 +6,16 @@ import org.multikoisas.dto.UpdateUserRequest;
 import org.multikoisas.dto.UserRequest;
 import org.multikoisas.dto.UserResponse;
 import org.multikoisas.entities.UserEntity;
-import org.multikoisas.enums.Role;
 import org.multikoisas.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.multikoisas.repository.UserRepository;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -96,37 +97,48 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(String username, UpdateUserRequest request) {
 
-        //normalização para evitar problemas de case-sensitive
-        String normalizedEmail = request.getEmail().toLowerCase().trim();
-        Role normalizeRole = Role.valueOf(request.getRole().toString().trim().toUpperCase());
+        // 1. Identifica o usuário autenticado no contexto do Spring Security
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String loggedUsername = auth.getName();
+        boolean isLoggedUserAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        //Cria instância do usuário a ser atualizado, caso não exista lança exceção
-        UserEntity userToUpdate = userRepository.findByUsernameIgnoreCase(username)
+        // 2. Bloqueia se um usuário comum tentar editar a conta de outra pessoa
+        if (!isLoggedUserAdmin && !loggedUsername.equalsIgnoreCase(username.trim())) {
+            throw new AccessDeniedException("Você só tem permissão para alterar apenas o seu email e a senha.");
+        }
+
+        // 3. Busca o usuário a ser atualizado
+        UserEntity userToUpdate = userRepository.findByUsernameIgnoreCase(username.trim())
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
 
-        // Verifica se o novo email já está em uso por outro usuário
-        userRepository.findByEmail(request.getEmail())
-                .filter(user -> !user.getId().equals(userToUpdate.getId()))
-                .ifPresent(user -> {
-                    throw new IllegalArgumentException(
-                            "Este e-mail já está em uso por outra conta."
-                    );
-                });
-
-        // 1. Criptografia da senha (se request presente) e atualiza
-        String encryptedPassword = passwordEncoder.encode(request.getPassword());
-        userToUpdate.setPassword(encryptedPassword);
-        // 2. Valida request e atualiza o email
+        // 4. Valida e atualiza o e-mail
         if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
+            String normalizedEmail = request.getEmail().toLowerCase().trim();
+
+            userRepository.findByEmail(normalizedEmail)
+                    .filter(user -> !user.getId().equals(userToUpdate.getId()))
+                    .ifPresent(user -> {
+                        throw new IllegalArgumentException("Este e-mail já está em uso por outra conta.");
+                    });
+
             userToUpdate.setEmail(normalizedEmail);
         }
-        // 3. Valida request e atualiza o role
-        if(request.getRole() != null && !normalizeRole.toString().trim().isEmpty()) {
-            userToUpdate.setRole(normalizeRole);
+
+        // 5. Criptografa e atualiza a senha
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            userToUpdate.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        // 4. Gravação e Retorno
+
+        // 6. Atualização silenciosa: só altera a role se o usuário logado for ADMIN e o campo existir no request
+        if (isLoggedUserAdmin && request.getRole() != null) {
+            userToUpdate.setRole(request.getRole());
+        }
+
+        // 7. Gravação e Retorno
         userRepository.update(userToUpdate);
         return toResponse(userToUpdate);
+
     }
 
     private UserResponse toResponse(UserEntity userEntity) {
