@@ -7,13 +7,10 @@ import org.multikoisas.entities.CategoriaProdutoEntity;
 import org.multikoisas.repository.CategoriaProdutoRepository;
 import org.multikoisas.service.CategoriaProdutoService;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor

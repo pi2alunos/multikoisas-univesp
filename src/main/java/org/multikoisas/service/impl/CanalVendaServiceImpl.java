@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.CanalVendaRequest;
 import org.multikoisas.dto.CanalVendaResponse;
 import org.multikoisas.entities.CanalVendaEntity;
-import org.multikoisas.entities.CategoriaProdutoEntity;
-import org.multikoisas.entities.ProdutoEntity;
 import org.multikoisas.repository.CanalVendaRepository;
 import org.multikoisas.service.CanalVendaService;
 import org.springframework.dao.DataIntegrityViolationException;
