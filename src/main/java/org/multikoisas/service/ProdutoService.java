@@ -13,6 +13,6 @@ public interface ProdutoService {
     ProdutoResponse findById(Integer id);
     ProdutoResponse save(ProdutoRequest request);
     boolean update(Integer id, ProdutoRequest request);
-    boolean deleteById(Integer id);
+//    boolean deleteById(Integer id);
     void deletarProdutoComDependencias(Integer produtoId);
 }

@@ -86,21 +86,22 @@ public class ProdutoServiceImpl implements ProdutoService {
         return produtoRepository.update(id, entity);
     }
 
-    @Override
-    public boolean deleteById(Integer id) {
-        if (produtoRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado");
-        }
-
-        try {
-            return produtoRepository.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Não é possível excluir este produto porque ele está associado a outras informações.");
-        }
-    }
+//    @Override
+//    public boolean deleteById(Integer id) {
+//
+//
+//        try {
+//            return produtoRepository.deleteById(id);
+//        } catch (DataIntegrityViolationException e) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT,"Não é possível excluir este produto porque ele está associado a outras informações.");
+//        }
+//    }
 
     @Transactional
     public void deletarProdutoComDependencias(Integer produtoId) {
+        if (produtoRepository.findById(produtoId).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse produto nao existe e nao pode ser deletado");
+        }
 
         if (!produtoImagemService.findByProdutoId(produtoId).isEmpty()) {
             System.out.println("1 - Removendo imagem(ns)");
