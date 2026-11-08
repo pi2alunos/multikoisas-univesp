@@ -12,7 +12,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
@@ -74,7 +73,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
         List<UserEntity> result = jdbcTemplate.query(SELECT_BY_EMAIL, Map.of("email", email), ROW_MAPPER);
 
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
 
     }
 
@@ -114,7 +113,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
             return null;
         }
 
-        UserEntity result = entity.get(0);
+        UserEntity result = entity.getFirst();
 
         //retorna o delete do usuario com base no id capturado
         jdbcTemplate.update(DELETE_BY_ID, Map.of("id", result.getId()));

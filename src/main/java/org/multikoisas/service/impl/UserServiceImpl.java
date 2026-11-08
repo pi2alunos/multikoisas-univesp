@@ -99,6 +99,7 @@ public class UserServiceImpl implements UserService {
 
         // 1. Identifica o usuário autenticado no contexto do Spring Security
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        assert auth != null;
         String loggedUsername = auth.getName();
         boolean isLoggedUserAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
