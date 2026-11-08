@@ -3,11 +3,13 @@ package org.multikoisas.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.SocialNetworkRequest;
 import org.multikoisas.dto.SocialNetworkResponse;
+import org.multikoisas.entities.CategoriaEntity;
 import org.multikoisas.entities.SocialNetworkEntity;
 import org.multikoisas.repository.SocialNetworkRepository;
 import org.multikoisas.service.SocialNetworkService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -20,6 +22,7 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
         List<SocialNetworkEntity> socialNetworks;
         if (name == null || name.trim().isEmpty()) {
             socialNetworks = socialRepository.findAll();
+            socialNetworks.sort(Comparator.comparing(SocialNetworkEntity::getId));
         } else {
             socialNetworks = socialRepository.findByName(name);
         }

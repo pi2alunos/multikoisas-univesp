@@ -1,6 +1,7 @@
 
 package org.multikoisas.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<ProdutoEntity> entity;
         if (id == null) {
             entity = produtoRepository.findAll();
+            entity.sort(Comparator.comparing(ProdutoEntity::getId));
         } else if(produtoRepository.findById(id).isPresent()) {
             entity = List.of(produtoRepository.findById(id).get());
         } else {

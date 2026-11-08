@@ -1,6 +1,7 @@
 
 package org.multikoisas.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class CanalVendaServiceImpl implements CanalVendaService {
             entity = canalVendaRepository.findByName(nome);
         } else {
             entity = canalVendaRepository.findAll();
+            entity.sort(Comparator.comparing(CanalVendaEntity::getId));
         }
         return entity.stream().map(this::toResponse).toList();
     }
