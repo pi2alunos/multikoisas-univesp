@@ -40,7 +40,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         } else if (categoriaId != null) {
             entity = categoriaRepository.findById(categoriaId);
         } else {
-            entity = categoriaRepository.findByName(nome);
+            entity = categoriaRepository.findByNameIgnoreCase(nome);
         }
         return entity.stream().map(this::toResponse).toList();
     }
@@ -63,7 +63,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public List<CategoriaResponse> findByName(String nome) {
-        return categoriaRepository.findByName(nome)
+        return categoriaRepository.findByNameIgnoreCase(nome)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -74,7 +74,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         validarNome(request.getNome());
 
-        if (categoriaRepository.findByName(request.getNome()).stream().findFirst().isPresent()) {
+        if (categoriaRepository.findByNameIgnoreCase(request.getNome()).stream().findFirst().isPresent()) {
             throw new IllegalArgumentException("Esta categoria já está cadastrada.");
         }
 
@@ -95,7 +95,7 @@ public class CategoriaServiceImpl implements CategoriaService {
             );
         }
 
-        CategoriaEntity entity = new CategoriaEntity();
+        CategoriaEntity entity = toEntity(request);
         entity.setId(id);
         entity.setNome(request.getNome());
 
@@ -124,8 +124,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     private CategoriaEntity toEntity(CategoriaRequest request)
     {
         return CategoriaEntity.builder()
-                .id(request.getId())
-                .nome(request.getNome())
+                .nome(request.getNome().toUpperCase())
                 .build();
     }
 

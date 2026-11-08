@@ -40,17 +40,17 @@ public class CategoriaRepositoryJdbcImpl implements CategoriaRepository {
     }
 
     @Override
-    public List<CategoriaEntity> findByName(String nome) {
+    public List<CategoriaEntity> findByNameIgnoreCase(String nome) {
 
         Map<String, Object> params = new HashMap<>();
         params.put("nome", nome);
-        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
+        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = UPPER(:nome)";
         return jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
     }
 
     @Override
     public List<CategoriaEntity> findByCategoriaIdAndCategoriaNome(Integer categoriaId, String nome) {
-        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND nome = :nome";
+        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND nome = UPPER(:nome)";
         Map<String, Object> params = new HashMap<>();
         params.put("id", categoriaId);
         params.put("nome", nome);
