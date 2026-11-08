@@ -35,8 +35,17 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
     }
 
     @Override
+    public List<CanalVendaEntity> findByIdAndName(Integer id, String nome) {
+        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND TRIM(LOWER(nome)) = TRIM(LOWER(:nome))";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("nome", nome);
+        return jdbcTemplate.query(SELECT_BY_ID_AND_NAME, params, ROW_MAPPER);
+    }
+
+    @Override
     public List<CanalVendaEntity> findByName(String nome) {
-        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = :nome";
+        String SELECT_BY_NAME = SELECT_ALL + " WHERE TRIM(LOWER(nome)) = TRIM(LOWER(:nome))";
         return jdbcTemplate.query(SELECT_BY_NAME, Map.of("nome", nome), ROW_MAPPER);
     }
 

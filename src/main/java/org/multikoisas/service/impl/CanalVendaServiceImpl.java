@@ -3,12 +3,15 @@ package org.multikoisas.service.impl;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import lombok.RequiredArgsConstructor;
 
 import org.multikoisas.dto.CanalVendaRequest;
 import org.multikoisas.dto.CanalVendaResponse;
 import org.multikoisas.entities.CanalVendaEntity;
+import org.multikoisas.entities.CategoriaProdutoEntity;
+import org.multikoisas.entities.ProdutoEntity;
 import org.multikoisas.repository.CanalVendaRepository;
 import org.multikoisas.service.CanalVendaService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,13 +28,19 @@ public class CanalVendaServiceImpl implements CanalVendaService {
     @Override
     public List<CanalVendaResponse> findByCanalIdOrByNomeOrAll(Integer id, String nome) {
         List<CanalVendaEntity> entity;
-        if (id != null) {
-            entity = canalVendaRepository.findById(id);
-        } else if (nome != null && !nome.isBlank()) {
-            entity = canalVendaRepository.findByName(nome);
-        } else {
+        if (id == null && nome == null) {
             entity = canalVendaRepository.findAll();
             entity.sort(Comparator.comparing(CanalVendaEntity::getId));
+        } else if (id != null && nome != null) {
+            entity = canalVendaRepository.findByIdAndName(id, nome);
+        } else if (id != null) {
+            entity = canalVendaRepository.findById(id);
+        } else {
+            entity = canalVendaRepository.findByName(nome);
+        }
+
+        if (entity.isEmpty()) {
+            throw new NoSuchElementException("Nenhum canal de venda encontrado.");
         }
         return entity.stream().map(this::toResponse).toList();
     }
