@@ -10,7 +10,6 @@ import org.multikoisas.dto.ProdutoResponse;
 import org.multikoisas.entities.ProdutoEntity;
 import org.multikoisas.repository.ProdutoRepository;
 import org.multikoisas.service.*;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,8 +117,6 @@ public class ProdutoServiceImpl implements ProdutoService {
 
         System.out.println("4 - Removendo produto");
         produtoRepository.deleteById(produtoId);
-
-        System.out.println("5 - Fim");
     }
 
     private ProdutoResponse toResponse(ProdutoEntity entity) {

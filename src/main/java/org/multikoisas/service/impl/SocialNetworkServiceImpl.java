@@ -42,7 +42,7 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     public SocialNetworkResponse save(SocialNetworkRequest request) {
 
         if (socialRepository.existsByNameIgnoreCase(request.getDescricao())) {
-            throw new IllegalArgumentException("Esta rede social já está cadastrada.");
+            throw new IllegalArgumentException("Esta rede social ja esta cadastrada.");
         }
 
         SocialNetworkEntity entityToSave = toEntity(request);
@@ -52,22 +52,22 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     }
 
     @Override
-    public SocialNetworkResponse delete(String name) {
+    public SocialNetworkResponse delete(String descricao) {
 
-        SocialNetworkEntity entityDeleted = socialRepository.delete(name);
+        SocialNetworkEntity entityDeleted = socialRepository.delete(descricao);
 
         if (entityDeleted == null) {
             return null;
         }
-
+        System.out.println("SERVICE: " + descricao);
         return toResponse(entityDeleted);
     }
 
     @Override
-    public SocialNetworkResponse update(String description, String link) {
+    public SocialNetworkResponse update(String descricao, String link) {
 
-        SocialNetworkEntity socialNetworkToUpdate = socialRepository.findByName(description).stream().findFirst().isPresent()
-                ? socialRepository.findByName(description).stream().findFirst().get()
+        SocialNetworkEntity socialNetworkToUpdate = socialRepository.findByName(descricao).stream().findFirst().isPresent()
+                ? socialRepository.findByName(descricao).stream().findFirst().get()
                 : null;
 
         if (socialNetworkToUpdate == null) {
@@ -95,7 +95,7 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     private SocialNetworkEntity toEntity(SocialNetworkRequest socialNetworkRequest)
     {
         return SocialNetworkEntity.builder()
-                .descricao(socialNetworkRequest.getDescricao())
+                .descricao(socialNetworkRequest.getDescricao().trim().toLowerCase())
                 .link(socialNetworkRequest.getLink())
                 .build();
     }

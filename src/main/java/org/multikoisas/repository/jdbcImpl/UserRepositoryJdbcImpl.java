@@ -24,8 +24,8 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
     private static final String SELECT_ALL = "SELECT id, email, password, username, role FROM public.usuario";
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
-    private static final String UPDATE_USER = "UPDATE public.usuario SET email = :email, password = :password, role = :role WHERE username = LOWER(:username)";
-    private static final String SELECT_BY_USERNAME = SELECT_ALL + " WHERE username = LOWER(:username)";
+    private static final String UPDATE_USER = "UPDATE public.usuario SET email = :email, password = :password, role = :role WHERE TRIM(LOWER(username)) = TRIM(LOWER(:username))";
+    private static final String SELECT_BY_USERNAME = SELECT_ALL + " WHERE TRIM(LOWER(username)) = TRIM(LOWER(:username))";
     private static final String INSERT = "INSERT INTO public.usuario (email, password, username, role) VALUES (:email, :password, :username, :role)";
     private static final String DELETE_BY_ID = "DELETE FROM public.usuario WHERE id = :id";
 
@@ -69,7 +69,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     @Override
     public Optional<UserEntity> findByEmail(String email) {
 
-        String SELECT_BY_EMAIL = SELECT_ALL + " WHERE \"email\" = :email";
+        String SELECT_BY_EMAIL = SELECT_ALL + " WHERE TRIM(LOWER(\"email\")) = TRIM(LOWER(:email))";
 
         List<UserEntity> result = jdbcTemplate.query(SELECT_BY_EMAIL, Map.of("email", email), ROW_MAPPER);
 
@@ -82,7 +82,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
         List<UserEntity> result = jdbcTemplate.query(SELECT_BY_USERNAME, Map.of("username", username), ROW_MAPPER);
 
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 
     @Override

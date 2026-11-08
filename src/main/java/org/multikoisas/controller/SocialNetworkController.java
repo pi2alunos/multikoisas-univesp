@@ -31,22 +31,24 @@ public class SocialNetworkController {
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody SocialNetworkRequest request){
-        // SocialNetworkResponse response = socialService.save(request); //caso queira o retorno do response
-        // return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        SocialNetworkResponse response = socialService.save(request); //caso queira o retorno do response
+        return response != null ? ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Rede social cadastrada com sucesso", "dados", response)) :
+                ResponseEntity.noContent().build();
 
-        SocialNetworkResponse response = socialService.save(request);
-        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body("Rede social cadastrada com sucesso") : ResponseEntity.noContent().build();// retorna o 201 Created com o usuário criado
+//        SocialNetworkResponse response = socialService.save(request);
+//        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body("Rede social cadastrada com sucesso") : ResponseEntity.noContent().build();// retorna o 201 Created com o usuário criado
     }
 
-    @DeleteMapping("/{description}")
-    public ResponseEntity<Object> deleteUser(@PathVariable String description){
-        SocialNetworkResponse response = socialService.delete(description);
+    @DeleteMapping("/{descricao}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String descricao){
+        SocialNetworkResponse response = socialService.delete(descricao);
 
         //return response == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(response); // retorna o 200 OK com o usuário deletado
-        return response != null ? ResponseEntity.ok(Map.of("message", "Rede social " + description + " deletada com sucesso.")) : ResponseEntity.notFound().build();
+        return response != null ? ResponseEntity.ok(Map.of("message", "Rede social " + descricao + " deletada com sucesso.")) : ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{description}")
+    @PutMapping("/{descricao}")
     public ResponseEntity<Object> updateSocialNetwork(@PathVariable String description, @RequestBody LinkRequest request) {
         SocialNetworkResponse response = socialService.update(description, request.getLink());
         return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Rede social atualizada com sucesso", "dados", response)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Rede social nao encontrada"));

@@ -1,6 +1,7 @@
 package org.multikoisas.repository.jdbcImpl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.multikoisas.entities.SocialNetworkEntity;
 import org.multikoisas.repository.SocialNetworkRepository;
@@ -19,9 +20,9 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     private final static String SELECT_ALL = "SELECT id, descricao, link FROM public.\"redesSociais\"";
-    private final static String SELECT_BY_DESCRIPTION = SELECT_ALL + " WHERE descricao = :descricao";
+    private final static String SELECT_BY_DESCRIPTION = SELECT_ALL + " WHERE TRIM(LOWER(descricao)) = TRIM(LOWER(:descricao))";
     private final static String INSERT = "INSERT INTO public.\"redesSociais\" (descricao, link) VALUES (:descricao, :link)";
-    private final static String DELETE = "DELETE FROM public.\"redesSociais\" WHERE descricao = :descricao";
+    private final static String DELETE = "DELETE FROM public.\"redesSociais\" WHERE TRIM(LOWER(descricao)) = TRIM(LOWER(:descricao))";
     private final static String UPDATE = "UPDATE public.\"redesSociais\" SET descricao = :descricao, link = :link WHERE id = :id";
 
     private static final RowMapper<SocialNetworkEntity> ROW_MAPPER = (rs, rowNum) -> {
@@ -40,9 +41,7 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
 
     @Override
     public List<SocialNetworkEntity> findAll(){
-
         return jdbcTemplate.query(SELECT_ALL, ROW_MAPPER);
-
     }
 
     @Override
@@ -59,33 +58,21 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
     public SocialNetworkEntity save(SocialNetworkEntity entity) {
         // 1. Preparamos o SQL correto para inserção
         String INSERT_SQL = INSERT + " RETURNING id";
-
         // 2. Lemos todos os atributos do usuário (que vieram preenchidos do POST)
         SqlParameterSource params = new BeanPropertySqlParameterSource(entity);
-
         // 3. Executamos o INSERT de fato e aguardamos o ID gerado como retorno
         Integer generatedId = jdbcTemplate.queryForObject(INSERT_SQL, params, Integer.class);
-
         // 4. Injetamos o ID no objeto e o devolvemos
         entity.setId(generatedId);
-
         return entity;
     }
 
     @Override
     public SocialNetworkEntity delete(String descricao) {
 
-        List<SocialNetworkEntity> entity = jdbcTemplate.query(SELECT_ALL + " WHERE descricao = :descricao", java.util.Map.of("descricao", descricao), ROW_MAPPER);
-
-        if (entity.isEmpty()) {
-            return null;
-        }
-
-        SocialNetworkEntity result = entity.getFirst();
-
-        jdbcTemplate.update(DELETE, java.util.Map.of("descricao", descricao));
-
-        return result;
+        List<SocialNetworkEntity> result = jdbcTemplate.query(SELECT_ALL + " WHERE TRIM(LOWER(descricao)) = TRIM(LOWER(:descricao))", Map.of("descricao", descricao), ROW_MAPPER);
+        jdbcTemplate.update(DELETE, Map.of("descricao", descricao));
+        return result.isEmpty() ? null : result.getFirst();
     }
 
     @Override
