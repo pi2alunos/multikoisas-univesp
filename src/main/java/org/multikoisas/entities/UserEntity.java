@@ -2,6 +2,7 @@ package org.multikoisas.entities;
 
 
 import lombok.*;
+import org.multikoisas.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,15 +21,12 @@ public class UserEntity implements UserDetails {
     private String email;
     private String password;
     private String username;
-    private String role;
+    private Role role;
 
-    // Define as permissões (roles) do usuário
+    // Define as permissões (roles) do usuário - lógica presente no ENUM ROLE
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if ("ADMIN".equalsIgnoreCase(this.role)) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        }
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return role.getAuthorities();
     }
 
     @Override

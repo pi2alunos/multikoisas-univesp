@@ -2,15 +2,18 @@ package org.multikoisas.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
+import org.multikoisas.dto.UpdateUserRequest;
 import org.multikoisas.dto.UserRequest;
 import org.multikoisas.dto.UserResponse;
 import org.multikoisas.entities.UserEntity;
+import org.multikoisas.enums.Role;
 import org.multikoisas.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.multikoisas.repository.UserRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 @Service
@@ -25,11 +28,11 @@ public class UserServiceImpl implements UserService {
         if(id != null) {
             entity = userRepository.findById(id).stream().toList();
         } else if (username != null && !username.trim().isEmpty()) {
-            entity = userRepository.findByUsername(username).stream().toList();
+            entity = userRepository.findByUsernameIgnoreCase(username).stream().toList();
         } else {
             entity = userRepository.findAll();
         }
-        return entity.isEmpty() ? List.of() : entity.stream().map(this::toResponse).toList();
+        return entity.stream().map(this::toResponse).toList();
     }
 
     @Override
@@ -46,27 +49,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse findByUsername(String username) {
-        return userRepository.findByUsername(username).map(this::toResponse).orElse(null);
+        return userRepository.findByUsernameIgnoreCase(username).map(this::toResponse).orElse(null);
     }
 
     @Override
     public UserResponse save(UserRequest request) {
 
-        userRepository.findByUsername(request.getUsername()).ifPresent(user -> {
+        String normalizedUsername = request.getUsername().trim();
+        String normalizedEmail = request.getEmail().toLowerCase().trim();
+
+        userRepository.findByUsernameIgnoreCase(normalizedUsername).ifPresent(user -> {
             throw new IllegalArgumentException("Este nome de usuário já está em uso.");
         });
 
         // Se o retorno do banco estiver presente, a exceção é lançada imediatamente
-        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
+        userRepository.findByEmail(normalizedEmail).ifPresent(user -> {
             throw new IllegalArgumentException("Já existe um usuário cadastrado com este e-mail.");
         });
 
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
         UserEntity entityToSave = UserEntity.builder()
-                .email(request.getEmail())
+                .email(normalizedEmail)
                 .password(encryptedPassword) // <-- Inserir o hash aqui
-                .username(request.getUsername())
+                .username(normalizedUsername)
                 .role(request.getRole())
                 .build();
 
@@ -88,33 +94,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse update(String username, UserRequest request) {
+    public UserResponse update(String username, UpdateUserRequest request) {
 
-        //todo precisa implementar a validação de admin para atualizar ele e os usuarios
+        //normalização para evitar problemas de case-sensitive
+        String normalizedEmail = request.getEmail().toLowerCase().trim();
+        Role normalizeRole = Role.valueOf(request.getRole().toString().trim().toUpperCase());
 
-        UserEntity userToUpdate = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado.")); // 1. Lança erro se não achar
+        //Cria instância do usuário a ser atualizado, caso não exista lança exceção
+        UserEntity userToUpdate = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
 
-        // 2. A Mágica Funcional: Mescla limpa e direta
-        updateIfValid(request.getEmail(), userToUpdate::setEmail);
-        updateIfValid(request.getPassword(), userToUpdate::setPassword);
+        // Verifica se o novo email já está em uso por outro usuário
+        userRepository.findByEmail(request.getEmail())
+                .filter(user -> !user.getId().equals(userToUpdate.getId()))
+                .ifPresent(user -> {
+                    throw new IllegalArgumentException(
+                            "Este e-mail já está em uso por outra conta."
+                    );
+                });
 
-        // 3. Regra de Negócio Isolada (O E-mail)
-        // O e-mail continua precisando de um bloco próprio porque requer validação no banco de dados.
-        String novoEmail = request.getEmail();
-        if (novoEmail != null && !novoEmail.isBlank() && !novoEmail.equals(userToUpdate.getEmail())) {
-
-            userRepository.findByEmail(novoEmail).ifPresent(existingUser -> {
-                throw new IllegalArgumentException("Este e-mail já está em uso por outra conta.");
-            });
-
-            userToUpdate.setEmail(novoEmail);
+        // 1. Criptografia da senha (se request presente) e atualiza
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        userToUpdate.setPassword(encryptedPassword);
+        // 2. Valida request e atualiza o email
+        if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
+            userToUpdate.setEmail(normalizedEmail);
         }
-
+        // 3. Valida request e atualiza o role
+        if(request.getRole() != null && !normalizeRole.toString().trim().isEmpty()) {
+            userToUpdate.setRole(normalizeRole);
+        }
         // 4. Gravação e Retorno
         userRepository.update(userToUpdate);
         return toResponse(userToUpdate);
-
     }
 
     private UserResponse toResponse(UserEntity userEntity) {
@@ -126,18 +138,4 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private UserEntity toEntity(UserRequest request) {
-        return UserEntity.builder()
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .username(request.getUsername())
-                .role(request.getRole())
-                .build();
-    }
-
-    private void updateIfValid(String novoValor, Consumer<String> atualizador) {
-        if (novoValor != null && !novoValor.isBlank()) {
-            atualizador.accept(novoValor);
-        }
-    }
 }

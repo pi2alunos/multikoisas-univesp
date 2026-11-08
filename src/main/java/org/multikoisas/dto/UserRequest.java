@@ -2,6 +2,7 @@ package org.multikoisas.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.multikoisas.enums.Role;
 
 @Getter
 @Setter
@@ -18,6 +19,6 @@ public class UserRequest {
     @NotBlank(message = "O campo password e obrigatoria")
     private String password;
     @NotBlank(message="o campo role e obrigatorio")
-    private String role;
+    private Role role;
 
 }

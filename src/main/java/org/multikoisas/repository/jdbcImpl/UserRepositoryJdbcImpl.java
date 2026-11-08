@@ -1,10 +1,12 @@
 package org.multikoisas.repository.jdbcImpl;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.multikoisas.entities.UserEntity;
+import org.multikoisas.enums.Role;
 import org.multikoisas.repository.UserRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,11 +23,11 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    private static final String SELECT_ALL = "SELECT id, \"email\", \"password\", \"username\", \"role\" FROM public.usuario";
+    private static final String SELECT_ALL = "SELECT id, email, password, username, role FROM public.usuario";
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
-    private static final String UPDATE_USER = "UPDATE public.usuario SET \"email\" = :email, \"password\" = :password WHERE \"username\" = :username";
-    private static final String SELECT_BY_USERNAME = SELECT_ALL + " WHERE \"username\" = :username";
-    private static final String INSERT = "INSERT INTO public.usuario (\"email\", \"password\", \"username\", \"role\") VALUES (:email, :password, :username, :role)";
+    private static final String UPDATE_USER = "UPDATE public.usuario SET email = :email, password = :password, role = :role WHERE username = LOWER(:username)";
+    private static final String SELECT_BY_USERNAME = SELECT_ALL + " WHERE username = LOWER(:username)";
+    private static final String INSERT = "INSERT INTO public.usuario (email, password, username, role) VALUES (:email, :password, :username, :role)";
     private static final String DELETE_BY_ID = "DELETE FROM public.usuario WHERE id = :id";
 
 
@@ -36,7 +38,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
         userEntity.setEmail(rs.getString("email"));
         userEntity.setPassword(rs.getString("password"));
         userEntity.setUsername(rs.getString("username"));
-        userEntity.setRole(rs.getString("role"));
+        userEntity.setRole(Role.valueOf(rs.getString("role")));
 
         return userEntity;
 
@@ -77,7 +79,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     }
 
     @Override
-    public Optional<UserEntity> findByUsername(String username) {
+    public Optional<UserEntity> findByUsernameIgnoreCase(String username) {
 
         List<UserEntity> result = jdbcTemplate.query(SELECT_BY_USERNAME, Map.of("username", username), ROW_MAPPER);
 
@@ -90,7 +92,8 @@ public class UserRepositoryJdbcImpl implements UserRepository {
         String INSERT_USER = INSERT + " RETURNING id";
 
         // 2. Lemos todos os atributos do usuário (que vieram preenchidos do POST)
-        SqlParameterSource params = new BeanPropertySqlParameterSource(entity);
+        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(entity);
+        params.registerSqlType("role", Types.VARCHAR); //importante indicar o tipo do ENUM (que é varchar) para o JDBC
 
         // 3. Executamos o INSERT de fato e aguardamos o ID gerado como retorno
         Integer generatedId = jdbcTemplate.queryForObject(INSERT_USER, params, Integer.class);
@@ -122,7 +125,9 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     @Override
     public void update(UserEntity entity) {
         // O BeanPropertySqlParameterSource mapeia automaticamente os atributos do objeto para os :parametros do SQL
-        SqlParameterSource params = new BeanPropertySqlParameterSource(entity);
+        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(entity);
+        params.registerSqlType("role", Types.VARCHAR); //importante indicar o tipo do ENUM (que é varchar) para o JDBC
+
         jdbcTemplate.update(UPDATE_USER, params);
     }
 }

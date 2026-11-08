@@ -2,6 +2,7 @@ package org.multikoisas.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.multikoisas.dto.UpdateUserRequest;
 import org.multikoisas.dto.UserRequest;
 import org.multikoisas.dto.UserResponse;
 import org.multikoisas.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/user")
@@ -47,7 +49,7 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable String username, @RequestBody UserRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@Valid @PathVariable String username, @RequestBody UpdateUserRequest request) {
         UserResponse response = userService.update(username, request);
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
@@ -68,5 +70,13 @@ public class UserController {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         // Interceta a exceção de negócio e devolve o status 409 com a mensagem exata
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNoSuchElementException(
+            NoSuchElementException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
     }
 }

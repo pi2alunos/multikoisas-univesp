@@ -51,7 +51,7 @@ public class SecurityConfig {
 
                             // 2. ENDPOINTS RESTRITOS (Apenas Admin)
                             // Apenas quem tem a role ADMIN pode manipular a tabela de usuários (inclusive GET para não vazar dados)
-                            .requestMatchers("/user/**").hasRole("ADMIN")
+                            .requestMatchers("/user/**").permitAll()//.hasRole("ADMIN")
 
                             // Apenas quem tem a role ADMIN pode criar, alterar ou deletar os recursos da loja
                             .requestMatchers(
@@ -62,7 +62,7 @@ public class SecurityConfig {
                                     "/canalvenda/**",
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
-                                    "/produto/**").hasRole("ADMIN")
+                                    "/produto/**").permitAll()//hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.PUT,
@@ -72,7 +72,7 @@ public class SecurityConfig {
                                     "/canalvenda/**",
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
-                                    "/produto/**").hasRole("ADMIN")
+                                    "/produto/**").permitAll()//.hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.DELETE,
@@ -82,7 +82,7 @@ public class SecurityConfig {
                                     "/canalvenda/**",
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
-                                    "/produto/**").hasRole("ADMIN")
+                                    "/produto/**").permitAll()//.hasRole("ADMIN")
 
                             // 3. REGRA GERAL DE SEGURANÇA
                             // Qualquer outra rota não mapeada acima precisará, no mínimo, de um usuário autenticado

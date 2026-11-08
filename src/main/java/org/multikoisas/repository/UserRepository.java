@@ -13,7 +13,7 @@ public interface UserRepository {
     List< UserEntity> findAll();
     Optional<UserEntity> findById(Integer id);
     Optional<UserEntity> findByEmail(String email);
-    Optional<UserEntity> findByUsername(String username);
+    Optional<UserEntity> findByUsernameIgnoreCase(String username);
     UserEntity save(UserEntity entity);
     UserEntity delete(String username);
     void update(UserEntity entity);

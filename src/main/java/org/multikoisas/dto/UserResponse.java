@@ -1,6 +1,7 @@
 package org.multikoisas.dto;
 
 import lombok.*;
+import org.multikoisas.enums.Role;
 
 @Getter
 @Setter
@@ -13,6 +14,6 @@ public class UserResponse {
     private Integer id;
     private String username;
     private String email;
-    private String role;
+    private Role role;
 
 }

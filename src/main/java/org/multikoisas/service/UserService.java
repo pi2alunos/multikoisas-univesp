@@ -1,5 +1,6 @@
 package org.multikoisas.service;
 
+import org.multikoisas.dto.UpdateUserRequest;
 import org.multikoisas.dto.UserRequest;
 import org.multikoisas.dto.UserResponse;
 
@@ -13,6 +14,6 @@ public interface UserService {
     UserResponse findByUsername(String username);
     UserResponse save(UserRequest request);
     UserResponse delete(String username);
-    UserResponse update(String username, UserRequest request);
+    UserResponse update(String username, UpdateUserRequest request);
 
 }
