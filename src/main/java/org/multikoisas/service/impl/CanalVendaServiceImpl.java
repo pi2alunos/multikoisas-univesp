@@ -69,13 +69,13 @@ public class CanalVendaServiceImpl implements CanalVendaService {
         }
 
         CanalVendaEntity entity = new CanalVendaEntity();
-        entity.setNome(request.getNome());
+        entity.setNome(request.getNome().trim().toUpperCase());
 
         return toResponse(canalVendaRepository.save(entity));
     }
 
     @Override
-    public boolean update(Integer id, CanalVendaRequest request) {
+    public CanalVendaResponse update(Integer id, CanalVendaRequest request) {
         if (request.getNome() == null || request.getNome().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O nome é obrigatório");
         }
@@ -86,15 +86,16 @@ public class CanalVendaServiceImpl implements CanalVendaService {
 
         CanalVendaEntity entity = new CanalVendaEntity();
         entity.setId(id);
-        entity.setNome(request.getNome());
+        entity.setNome(request.getNome().trim().toUpperCase());
 
-        return canalVendaRepository.update(id, entity);
+        canalVendaRepository.update(entity);
+        return toResponse(entity);
     }
 
     @Override
     public boolean deleteById(Integer id) {
         if (canalVendaRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal de venda não encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Canal de venda nao encontrado.");
         }
 
         try {
@@ -102,7 +103,7 @@ public class CanalVendaServiceImpl implements CanalVendaService {
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Não é possível excluir este canal de venda porque ela está associada a um ou mais produtos."
+                    "Nao e possivel excluir este canal de venda porque ela esta associada a um ou mais produtos."
             );
         }
     }

@@ -10,6 +10,6 @@ public interface CanalVendaRepository {
     List<CanalVendaEntity> findById(Integer id);
     List<CanalVendaEntity> findByName(String nome);
     CanalVendaEntity save(CanalVendaEntity entity);
-    boolean update(Integer id, CanalVendaEntity entity);
+    void update(CanalVendaEntity entity);
     boolean deleteById(Integer id);
 }

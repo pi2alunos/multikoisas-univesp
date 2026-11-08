@@ -2,6 +2,7 @@
 package org.multikoisas.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import jakarta.validation.Valid;
@@ -35,15 +36,15 @@ public class CanalVendaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCanalVenda(@PathVariable Integer id, @RequestBody CanalVendaRequest request) {
-        canalVendaService.update(id, request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> updateCanalVenda(@PathVariable Integer id, @RequestBody CanalVendaRequest request) {
+        CanalVendaResponse response = canalVendaService.update(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Canal de venda atualizado com sucesso.", "dados", response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCanalVenda(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteCanalVenda(@PathVariable Integer id) {
         canalVendaService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).body("Canal de venda excluido com sucesso.");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

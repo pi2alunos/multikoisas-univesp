@@ -13,6 +13,6 @@ public interface CanalVendaService {
     List<CanalVendaResponse> findById(Integer id);
     List<CanalVendaResponse> findByName(String nome);
     CanalVendaResponse save(CanalVendaRequest request);
-    boolean update(Integer id, CanalVendaRequest request);
+    CanalVendaResponse update(Integer id, CanalVendaRequest request);
     boolean deleteById(Integer id);
 }

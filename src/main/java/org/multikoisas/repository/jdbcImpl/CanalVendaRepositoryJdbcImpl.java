@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
 public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final String SELECT_ALL = "SELECT id, nome FROM public.\"canalVenda\"";
-    private final String INSERT = "INSERT INTO public.\"canalVenda\" (\"nome\") VALUES (:nome)";
+    private final String INSERT = "INSERT INTO public.\"canalVenda\" (nome) VALUES (:nome)";
+    private final String UPDATE = "UPDATE public.\"canalVenda\" SET nome = :nome WHERE id = :id";
 
     public CanalVendaRepositoryJdbcImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -36,7 +37,7 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
 
     @Override
     public List<CanalVendaEntity> findByIdAndName(Integer id, String nome) {
-        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND TRIM(LOWER(nome)) = TRIM(LOWER(:nome))";
+        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND TRIM(UPPER(nome)) = TRIM(UPPER(:nome))";
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
         params.put("nome", nome);
@@ -45,7 +46,7 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
 
     @Override
     public List<CanalVendaEntity> findByName(String nome) {
-        String SELECT_BY_NAME = SELECT_ALL + " WHERE TRIM(LOWER(nome)) = TRIM(LOWER(:nome))";
+        String SELECT_BY_NAME = SELECT_ALL + " WHERE TRIM(UPPER(nome)) = TRIM(UPPER(:nome))";
         return jdbcTemplate.query(SELECT_BY_NAME, Map.of("nome", nome), ROW_MAPPER);
     }
 
@@ -72,11 +73,9 @@ public class CanalVendaRepositoryJdbcImpl implements CanalVendaRepository {
     }
 
     @Override
-    public boolean update(Integer id, CanalVendaEntity entity) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
-        params.put("nome", entity.getNome());
-        return jdbcTemplate.update("UPDATE \"canalVenda\" SET nome = :nome WHERE id = :id", params) > 0;
+    public void update(CanalVendaEntity entity) {
+        SqlParameterSource params = new BeanPropertySqlParameterSource(entity);
+        jdbcTemplate.update(UPDATE, params);
     }
 
     @Override
