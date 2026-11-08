@@ -11,7 +11,7 @@ public interface UserService {
     List<UserResponse> getUsers(Integer id, String username);
     List<UserResponse> findAll();
     UserResponse findById(Integer id);
-    UserResponse findByUsername(String username);
+    //UserResponse findByUsername(String username);
     UserResponse save(UserRequest request);
     UserResponse delete(String username);
     UserResponse update(String username, UpdateUserRequest request);

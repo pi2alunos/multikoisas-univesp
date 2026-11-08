@@ -7,9 +7,13 @@ import org.multikoisas.entities.CategoriaProdutoEntity;
 import org.multikoisas.repository.CategoriaProdutoRepository;
 import org.multikoisas.service.CategoriaProdutoService;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class CategoriaProdutoServiceImpl implements CategoriaProdutoService {
         List<CategoriaProdutoEntity> entity;
         if (produtoId == null && categoriaId == null){
             entity = repository.findAll();
+            entity.sort(Comparator.comparing(CategoriaProdutoEntity::getProdutoId));
         } else if (produtoId != null && categoriaId != null) {
             entity = repository.findByProdutoIdAndCategoriaId(produtoId, categoriaId);
         } else if (produtoId != null) {
@@ -28,6 +33,7 @@ public class CategoriaProdutoServiceImpl implements CategoriaProdutoService {
         } else {
             entity = repository.findByCategoriaId(categoriaId);
         }
+
         return entity.stream().map(this::toResponse).toList();
     }
 

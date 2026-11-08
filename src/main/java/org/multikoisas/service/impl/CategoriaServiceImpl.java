@@ -1,7 +1,9 @@
 
 package org.multikoisas.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.multikoisas.dto.CategoriaRequest;
 import org.multikoisas.dto.CategoriaResponse;
@@ -35,6 +37,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         List<CategoriaEntity> entity;
         if (categoriaId == null && nome == null){
             entity = categoriaRepository.findAll();
+            entity.sort(Comparator.comparing(CategoriaEntity::getId));
         } else if (categoriaId != null && nome != null) {
             entity = categoriaRepository.findByCategoriaIdAndCategoriaNome(categoriaId, nome);
         } else if (categoriaId != null) {
@@ -42,7 +45,14 @@ public class CategoriaServiceImpl implements CategoriaService {
         } else {
             entity = categoriaRepository.findByNameIgnoreCase(nome);
         }
+
+        if(entity.isEmpty()){
+            throw new NoSuchElementException("Nenhuma categoria encontrada.");
+        }
+
         return entity.stream().map(this::toResponse).toList();
+
+
     }
 
     @Override

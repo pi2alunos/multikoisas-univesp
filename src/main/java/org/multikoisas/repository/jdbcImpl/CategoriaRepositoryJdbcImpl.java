@@ -44,13 +44,13 @@ public class CategoriaRepositoryJdbcImpl implements CategoriaRepository {
 
         Map<String, Object> params = new HashMap<>();
         params.put("nome", nome);
-        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = UPPER(:nome)";
+        String SELECT_BY_NAME = SELECT_ALL + " WHERE nome = TRIM(UPPER(:nome))";
         return jdbcTemplate.query(SELECT_BY_NAME, params, ROW_MAPPER);
     }
 
     @Override
     public List<CategoriaEntity> findByCategoriaIdAndCategoriaNome(Integer categoriaId, String nome) {
-        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND nome = UPPER(:nome)";
+        String SELECT_BY_ID_AND_NAME = SELECT_ALL + " WHERE id = :id AND nome = TRIM(UPPER(:nome))";
         Map<String, Object> params = new HashMap<>();
         params.put("id", categoriaId);
         params.put("nome", nome);

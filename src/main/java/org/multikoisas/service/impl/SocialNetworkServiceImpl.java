@@ -3,7 +3,6 @@ package org.multikoisas.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.SocialNetworkRequest;
 import org.multikoisas.dto.SocialNetworkResponse;
-import org.multikoisas.entities.CategoriaEntity;
 import org.multikoisas.entities.SocialNetworkEntity;
 import org.multikoisas.repository.SocialNetworkRepository;
 import org.multikoisas.service.SocialNetworkService;
@@ -36,10 +35,10 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
                 .toList();
     }
 
-    @Override
-    public List<SocialNetworkResponse> findByName(String name) {
-        return socialRepository.findByName(name).stream().map(this::toResponse).toList();
-    }
+//    @Override
+//    public List<SocialNetworkResponse> findByName(String name) {
+//        return socialRepository.findByName(name).stream().map(this::toResponse).toList();
+//    }
 
     @Override
     public SocialNetworkResponse save(SocialNetworkRequest request) {

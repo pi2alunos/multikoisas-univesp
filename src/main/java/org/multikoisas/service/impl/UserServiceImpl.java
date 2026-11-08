@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.UpdateUserRequest;
 import org.multikoisas.dto.UserRequest;
 import org.multikoisas.dto.UserResponse;
-import org.multikoisas.entities.CategoriaEntity;
 import org.multikoisas.entities.UserEntity;
 import org.multikoisas.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -52,10 +51,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).map(this::toResponse).orElse(null);
     }
 
-    @Override
-    public UserResponse findByUsername(String username) {
-        return userRepository.findByUsernameIgnoreCase(username).map(this::toResponse).orElse(null);
-    }
+//    @Override
+//    public UserResponse findByUsername(String username) {
+//        return userRepository.findByUsernameIgnoreCase(username).map(this::toResponse).orElse(null);
+//    }
 
     @Override
     public UserResponse save(UserRequest request) {

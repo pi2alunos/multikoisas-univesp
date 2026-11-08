@@ -2,6 +2,7 @@
 package org.multikoisas.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.CategoriaRequest;
@@ -19,7 +20,7 @@ public class CategoriaController {
     private final CategoriaService categoriaService;
 
     @GetMapping
-    public ResponseEntity<List<CategoriaResponse>> getCategorias(
+    public ResponseEntity<Object> getCategorias(
             @RequestParam(required = false) Integer categoriaId,
             @RequestParam(required = false) String nome) {
         List<CategoriaResponse> response = categoriaService.findByCategoriaIdOrCategoriaNomeOrAll(categoriaId, nome);
@@ -51,5 +52,13 @@ public class CategoriaController {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         // Interceta a exceção de negócio e devolve o status 409 com a mensagem exata
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNoSuchElementException(
+            NoSuchElementException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
     }
 }
