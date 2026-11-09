@@ -67,8 +67,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 
         ProdutoEntity entity = new ProdutoEntity();
         entity.setNome(request.getNome());
-        entity.setDescricaoProduto(request.getDescricaoProduto());
-
+        if(request.getDescricaoProduto().isEmpty()){
+            entity.setDescricaoProduto(request.getDescricaoProduto());
+        }
         return toResponse(produtoRepository.save(entity));
     }
 
@@ -77,7 +78,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         validar(request);
 
         if (produtoRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto nao encontrado");
         }
 
         ProdutoEntity entity = new ProdutoEntity();

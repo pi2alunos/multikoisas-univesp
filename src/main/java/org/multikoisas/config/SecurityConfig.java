@@ -47,7 +47,8 @@ public class SecurityConfig {
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
                                     "/produto/**",
-                                    "/imagem/**").permitAll()
+                                    "/imagem/**",
+                                    "/loja/**").permitAll()
 
                             // 2. ENDPOINTS RESTRITOS (Apenas Admin)
                             // Apenas quem tem a role ADMIN pode manipular a tabela de usuários (inclusive GET para não vazar dados)
@@ -62,7 +63,8 @@ public class SecurityConfig {
                                     "/canalvenda/**",
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
-                                    "/produto/**").permitAll()//hasRole("ADMIN")
+                                    "/produto/**",
+                                    "/loja/**").hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.PUT,
@@ -72,7 +74,8 @@ public class SecurityConfig {
                                     "/canalvenda/**",
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
-                                    "/produto/**").permitAll()//.hasRole("ADMIN")
+                                    "/produto/**",
+                                    "/loja/**").hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.DELETE,
@@ -82,7 +85,8 @@ public class SecurityConfig {
                                     "/canalvenda/**",
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
-                                    "/produto/**").permitAll()//.hasRole("ADMIN")
+                                    "/produto/**",
+                                    "/loja/**").hasRole("ADMIN")
 
                             // 3. REGRA GERAL DE SEGURANÇA
                             // Qualquer outra rota não mapeada acima precisará, no mínimo, de um usuário autenticado
