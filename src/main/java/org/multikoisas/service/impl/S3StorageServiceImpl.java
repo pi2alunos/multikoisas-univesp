@@ -29,7 +29,7 @@ public class S3StorageServiceImpl implements S3StorageService {
     public String uploadFile(MultipartFile file) {
 
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("O ficheiro não pode estar vazio.");
+            throw new IllegalArgumentException("O ficheiro nao pode estar vazio.");
         }
 
         // Gera um identificador único com a extensão original do ficheiro

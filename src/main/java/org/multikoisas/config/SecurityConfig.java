@@ -48,7 +48,8 @@ public class SecurityConfig {
                                     "/categoria/**",
                                     "/produto/**",
                                     "/imagem/**",
-                                    "/loja/**").permitAll()
+                                    "/loja/**",
+                                    "/imagemloja/**").permitAll()
 
                             // 2. ENDPOINTS RESTRITOS (Apenas Admin)
                             // Apenas quem tem a role ADMIN pode manipular a tabela de usuários (inclusive GET para não vazar dados)
@@ -64,7 +65,8 @@ public class SecurityConfig {
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
                                     "/produto/**",
-                                    "/loja/**").hasRole("ADMIN")
+                                    "/loja/**",
+                                    "/imagemloja/**").hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.PUT,
@@ -75,7 +77,8 @@ public class SecurityConfig {
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
                                     "/produto/**",
-                                    "/loja/**").hasRole("ADMIN")
+                                    "/loja/**",
+                                    "/imagemloja/**").hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.DELETE,
@@ -86,7 +89,8 @@ public class SecurityConfig {
                                     "/canalvendaproduto/**",
                                     "/categoria/**",
                                     "/produto/**",
-                                    "/loja/**").hasRole("ADMIN")
+                                    "/loja/**",
+                                    "/imagemloja/**").hasRole("ADMIN")
 
                             // 3. REGRA GERAL DE SEGURANÇA
                             // Qualquer outra rota não mapeada acima precisará, no mínimo, de um usuário autenticado

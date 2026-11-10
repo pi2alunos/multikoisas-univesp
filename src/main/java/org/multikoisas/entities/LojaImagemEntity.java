@@ -11,7 +11,6 @@ import org.multikoisas.enums.LojaImagemTipo;
 public class LojaImagemEntity {
 
     private Integer id;
-    private Integer lojaId;
     private String imagemUrl;
     private LojaImagemTipo tipo;
 
