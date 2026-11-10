@@ -42,6 +42,12 @@ public class LojaController {
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Nao encontramos registros para " + nomeLoja + "."));
     }
 
+    @DeleteMapping
+    public ResponseEntity<Object> deleteLoja(@RequestParam String nome){
+        lojaService.delete(nome);
+        return ResponseEntity.status(HttpStatus.OK).body("Nome e descricao da loja " + nome + " deletado com sucesso.");
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElementException(
             NoSuchElementException ex) {

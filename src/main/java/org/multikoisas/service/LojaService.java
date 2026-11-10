@@ -12,4 +12,5 @@ public interface LojaService {
     List<LojaResponse> getLoja(String nomeLoja);
     LojaResponse save(LojaRequest request);
     LojaResponse update(String nome, String descricao);
+    void delete(String nome);
 }

@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,5 +51,17 @@ public class GlobalExceptionHandler {
     return ResponseEntity
             .status(HttpStatus.FORBIDDEN)
             .body(body);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<Map<String, Object>> handleNoSuchElementException(
+            NoSuchElementException ex) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(body);
     }
 }

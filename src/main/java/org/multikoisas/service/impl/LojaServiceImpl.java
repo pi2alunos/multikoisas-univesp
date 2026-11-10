@@ -53,6 +53,14 @@ public class LojaServiceImpl implements LojaService {
         return toResponse(lojaRepository.update(entity.getFirst()));
     }
 
+    public void delete(String nome){
+        List<LojaEntity> entity = lojaRepository.findByName(nome);
+        if(entity.isEmpty()){
+            throw new NoSuchElementException("Nao existe loja com esse nome para ser deletado");
+        }
+            lojaRepository.delete(entity.getFirst().getId());
+    }
+
     private LojaResponse toResponse(LojaEntity entity){
         return LojaResponse.builder()
                 .id(entity.getId())
