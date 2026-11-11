@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                             // 2. ENDPOINTS RESTRITOS (Apenas Admin)
                             // Apenas quem tem a role ADMIN pode manipular a tabela de usuários (inclusive GET para não vazar dados)
-                            .requestMatchers("/user/**").permitAll()//.hasRole("ADMIN")
+                            .requestMatchers("/user/**").hasRole("ADMIN")
 
                             // Apenas quem tem a role ADMIN pode criar, alterar ou deletar os recursos da loja
                             .requestMatchers(
