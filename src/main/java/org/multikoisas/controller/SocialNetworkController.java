@@ -49,8 +49,8 @@ public class SocialNetworkController {
     }
 
     @PutMapping("/{descricao}")
-    public ResponseEntity<Object> updateSocialNetwork(@PathVariable String description, @RequestBody LinkRequest request) {
-        SocialNetworkResponse response = socialService.update(description, request.getLink());
+    public ResponseEntity<Object> updateSocialNetwork(@PathVariable String descricao, @RequestBody LinkRequest request) {
+        SocialNetworkResponse response = socialService.update(descricao, request.getLink());
         return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Rede social atualizada com sucesso", "dados", response)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Rede social nao encontrada"));
     }
 

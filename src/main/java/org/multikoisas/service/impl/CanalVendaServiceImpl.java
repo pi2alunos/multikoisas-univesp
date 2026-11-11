@@ -69,7 +69,7 @@ public class CanalVendaServiceImpl implements CanalVendaService {
         }
 
         CanalVendaEntity entity = new CanalVendaEntity();
-        entity.setNome(request.getNome().trim().toUpperCase());
+        entity.setNome(request.getNome());
 
         return toResponse(canalVendaRepository.save(entity));
     }

@@ -43,7 +43,7 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     @Override
     public SocialNetworkResponse save(SocialNetworkRequest request) {
 
-        if (socialRepository.existsByNameIgnoreCase(request.getDescricao())) {
+        if (socialRepository.existsByName(request.getDescricao())) {
             throw new IllegalArgumentException("Esta rede social ja esta cadastrada.");
         }
 
@@ -97,7 +97,7 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     private SocialNetworkEntity toEntity(SocialNetworkRequest socialNetworkRequest)
     {
         return SocialNetworkEntity.builder()
-                .descricao(socialNetworkRequest.getDescricao().trim().toLowerCase())
+                .descricao(socialNetworkRequest.getDescricao())
                 .link(socialNetworkRequest.getLink())
                 .build();
     }
