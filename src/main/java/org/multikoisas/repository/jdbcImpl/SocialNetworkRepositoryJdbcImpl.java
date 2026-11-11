@@ -21,8 +21,10 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
 
     private final static String SELECT_ALL = "SELECT id, descricao, link FROM public.\"redesSociais\"";
     private final static String SELECT_BY_DESCRIPTION = SELECT_ALL + " WHERE TRIM(LOWER(descricao)) = TRIM(LOWER(:descricao))";
+    private final static String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
+    private final static String SELECT_BY_ID_AND_DESCRIPTION = SELECT_BY_ID + " AND TRIM(LOWER(descricao)) = TRIM(LOWER(:descricao))";
     private final static String INSERT = "INSERT INTO public.\"redesSociais\" (descricao, link) VALUES (:descricao, :link)";
-    private final static String DELETE = "DELETE FROM public.\"redesSociais\" WHERE TRIM(LOWER(descricao)) = TRIM(LOWER(:descricao))";
+    private final static String DELETE = "DELETE FROM public.\"redesSociais\" WHERE id = :id";
     private final static String UPDATE = "UPDATE public.\"redesSociais\" SET descricao = :descricao, link = :link WHERE id = :id";
 
     private static final RowMapper<SocialNetworkEntity> ROW_MAPPER = (rs, rowNum) -> {
@@ -45,6 +47,11 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
     }
 
     @Override
+    public List<SocialNetworkEntity> findByIdAndName(Integer id, String descricao){
+        return jdbcTemplate.query(SELECT_BY_ID_AND_DESCRIPTION, Map.of("id", id, "descricao", descricao),ROW_MAPPER);
+    }
+
+    @Override
     public List<SocialNetworkEntity> findByName(String descricao) {
         try{
             SocialNetworkEntity socialNetworkEntity = jdbcTemplate.queryForObject(SELECT_BY_DESCRIPTION, java.util.Map.of("descricao", descricao), ROW_MAPPER);
@@ -52,6 +59,11 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             return List.of();
         }
+    }
+
+    @Override
+    public List<SocialNetworkEntity> findById(Integer id) {
+        return jdbcTemplate.query(SELECT_BY_ID, Map.of("id", id), ROW_MAPPER);
     }
 
     @Override
@@ -68,10 +80,9 @@ public class SocialNetworkRepositoryJdbcImpl implements SocialNetworkRepository{
     }
 
     @Override
-    public SocialNetworkEntity delete(String descricao) {
-
-        List<SocialNetworkEntity> result = jdbcTemplate.query(SELECT_ALL + " WHERE TRIM(LOWER(descricao)) = TRIM(LOWER(:descricao))", Map.of("descricao", descricao), ROW_MAPPER);
-        jdbcTemplate.update(DELETE, Map.of("descricao", descricao));
+    public SocialNetworkEntity delete(Integer id) {
+        List<SocialNetworkEntity> result = findById(id);
+        jdbcTemplate.update(DELETE, Map.of("id", id));
         return result.isEmpty() ? null : result.getFirst();
     }
 

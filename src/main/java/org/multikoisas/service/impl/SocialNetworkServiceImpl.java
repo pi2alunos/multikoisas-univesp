@@ -17,13 +17,17 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
 
     private final SocialNetworkRepository socialRepository;
 
-    public List<SocialNetworkResponse> getSocialNetworks(String name) {
+    public List<SocialNetworkResponse> getSocialNetworks(Integer id, String descricao) {
         List<SocialNetworkEntity> socialNetworks;
-        if (name == null || name.trim().isEmpty()) {
+        if (id == null && descricao == null) {
             socialNetworks = socialRepository.findAll();
             socialNetworks.sort(Comparator.comparing(SocialNetworkEntity::getId));
+        } else if (id != null && descricao != null){
+            socialNetworks = socialRepository.findByIdAndName(id, descricao);
+        } else if (descricao != null) {
+            socialNetworks = socialRepository.findByName(descricao);
         } else {
-            socialNetworks = socialRepository.findByName(name);
+            socialNetworks = socialRepository.findById(id);
         }
         return socialNetworks.isEmpty() ? List.of() : socialNetworks.stream().map(this::toResponse).toList();
     }
@@ -41,6 +45,15 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
 //    }
 
     @Override
+    public List<SocialNetworkResponse> findById(Integer id) {
+        List<SocialNetworkEntity> socialNetwork = socialRepository.findById(id);
+        if  (socialNetwork.isEmpty()) {
+            return null;
+        }
+        return socialNetwork.stream().map(this::toResponse).toList();
+    }
+
+    @Override
     public SocialNetworkResponse save(SocialNetworkRequest request) {
 
         if (socialRepository.existsByName(request.getDescricao())) {
@@ -54,28 +67,25 @@ public class SocialNetworkServiceImpl implements SocialNetworkService {
     }
 
     @Override
-    public SocialNetworkResponse delete(String descricao) {
+    public SocialNetworkResponse delete(Integer id) {
 
-        SocialNetworkEntity entityDeleted = socialRepository.delete(descricao);
+        SocialNetworkEntity entityDeleted = socialRepository.delete(id);
 
         if (entityDeleted == null) {
             return null;
         }
-        System.out.println("SERVICE: " + descricao);
         return toResponse(entityDeleted);
     }
 
     @Override
-    public SocialNetworkResponse update(String descricao, String link) {
+    public SocialNetworkResponse update(Integer id, String link) {
 
-        SocialNetworkEntity socialNetworkToUpdate = socialRepository.findByName(descricao).stream().findFirst().isPresent()
-                ? socialRepository.findByName(descricao).stream().findFirst().get()
-                : null;
+        List<SocialNetworkEntity> result = socialRepository.findById(id);
 
-        if (socialNetworkToUpdate == null) {
-            return null;
+        if (result == null || result.isEmpty()) {
+            throw new IllegalArgumentException("Essa rede social nao existe.");
         }
-
+        SocialNetworkEntity socialNetworkToUpdate = result.getFirst();
         socialNetworkToUpdate.setLink(link);
 
         // Gravação e Retorno

@@ -23,10 +23,11 @@ public class SocialNetworkController {
     private final SocialNetworkService socialService;
 
     @GetMapping
-    public ResponseEntity<List<SocialNetworkResponse>> getSocialNetwork(@RequestParam(required = false) String name)
+    public ResponseEntity<Object> getSocialNetwork(@RequestParam(required = false) Integer id, @RequestParam(required = false) String name)
     {
-        List<SocialNetworkResponse> response = socialService.getSocialNetworks(name);
-        return response.isEmpty()? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
+        List<SocialNetworkResponse> response = socialService.getSocialNetworks(id, name);
+        return response.isEmpty()? ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Rede social nao encontrada.")) :
+                ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
@@ -34,24 +35,25 @@ public class SocialNetworkController {
         SocialNetworkResponse response = socialService.save(request); //caso queira o retorno do response
         return response != null ? ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Rede social cadastrada com sucesso", "dados", response)) :
-                ResponseEntity.noContent().build();
+                ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(Map.of("message", "Nao foi possivel cadastrar a rede social"));
 
 //        SocialNetworkResponse response = socialService.save(request);
 //        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body("Rede social cadastrada com sucesso") : ResponseEntity.noContent().build();// retorna o 201 Created com o usuário criado
     }
 
-    @DeleteMapping("/{descricao}")
-    public ResponseEntity<Object> deleteUser(@PathVariable String descricao){
-        SocialNetworkResponse response = socialService.delete(descricao);
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable Integer id){
+        SocialNetworkResponse response = socialService.delete(id);
         //return response == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(response); // retorna o 200 OK com o usuário deletado
-        return response != null ? ResponseEntity.ok(Map.of("message", "Rede social " + descricao + " deletada com sucesso.")) : ResponseEntity.notFound().build();
+        return response != null ? ResponseEntity.ok(Map.of("message", "Rede social: " + response.getDescricao() + " deletada com sucesso.")) :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Erro ao deletar rede social id: " + id));
     }
 
-    @PutMapping("/{descricao}")
-    public ResponseEntity<Object> updateSocialNetwork(@PathVariable String description, @RequestBody LinkRequest request) {
-        SocialNetworkResponse response = socialService.update(description, request.getLink());
-        return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Rede social atualizada com sucesso", "dados", response)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Rede social nao encontrada"));
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateSocialNetwork(@PathVariable Integer id, @RequestBody LinkRequest request) {
+        SocialNetworkResponse response = socialService.update(id, request.getLink());
+        return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Rede social atualizada com sucesso", "dados", response)) :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Rede social nao encontrada"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
