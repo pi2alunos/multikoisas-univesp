@@ -13,4 +13,6 @@ public class LojaRequest {
     private String nomeLoja;
     @NotBlank(message = "A descricao da loja e obrigatoria.")
     private String descricaoLoja;
+    @NotBlank(message = "o endereco e obrigatorio.")
+    private String endereco;
 }

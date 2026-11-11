@@ -12,4 +12,5 @@ public class LojaResponse {
     private Integer id;
     private String nomeLoja;
     private String descricaoLoja;
+    private String endereco;
 }

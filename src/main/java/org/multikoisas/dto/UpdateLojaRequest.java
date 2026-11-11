@@ -10,4 +10,5 @@ import lombok.*;
 public class UpdateLojaRequest {
 
     private String descricaoLoja;
+    private String endereco;
 }

@@ -66,7 +66,7 @@ public class SecurityConfig {
                                     "/categoria/**",
                                     "/produto/**",
                                     "/loja/**",
-                                    "/imagemloja/**").hasRole("ADMIN")
+                                    "/imagemloja/**").permitAll()//.hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.PUT,
@@ -78,7 +78,7 @@ public class SecurityConfig {
                                     "/categoria/**",
                                     "/produto/**",
                                     "/loja/**",
-                                    "/imagemloja/**").hasRole("ADMIN")
+                                    "/imagemloja/**").permitAll()//.hasRole("ADMIN")
 
                             .requestMatchers(
                                     HttpMethod.DELETE,
@@ -90,7 +90,7 @@ public class SecurityConfig {
                                     "/categoria/**",
                                     "/produto/**",
                                     "/loja/**",
-                                    "/imagemloja/**").hasRole("ADMIN")
+                                    "/imagemloja/**").permitAll()//.hasRole("ADMIN")
 
                             // 3. REGRA GERAL DE SEGURANÇA
                             // Qualquer outra rota não mapeada acima precisará, no mínimo, de um usuário autenticado

@@ -36,8 +36,8 @@ public class LojaController {
     }
 
     @PutMapping("/{nomeLoja}")
-    public ResponseEntity<Object> updateLoja(@Valid @PathVariable String nomeLoja, @RequestBody UpdateLojaRequest updateLojaRequest){
-        LojaResponse response = lojaService.update(nomeLoja, updateLojaRequest.getDescricaoLoja());
+    public ResponseEntity<Object> updateLoja(@Valid @PathVariable String nomeLoja, @RequestBody UpdateLojaRequest request){
+        LojaResponse response = lojaService.update(nomeLoja, request);
         return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Descricao da loja " + nomeLoja + " atualizada com sucesso.", "dados", response)):
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Nao encontramos registros para " + nomeLoja + "."));
     }

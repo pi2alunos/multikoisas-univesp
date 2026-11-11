@@ -12,6 +12,6 @@ public class LojaEntity {
     private Integer id;
     private String nomeLoja;
     private String descricaoLoja;
-
+    private String endereco;
 
 }

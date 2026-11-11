@@ -4,6 +4,7 @@ package org.multikoisas.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.multikoisas.dto.LojaRequest;
 import org.multikoisas.dto.LojaResponse;
+import org.multikoisas.dto.UpdateLojaRequest;
 import org.multikoisas.entities.LojaEntity;
 import org.multikoisas.repository.LojaRepository;
 import org.multikoisas.service.LojaService;
@@ -40,15 +41,16 @@ public class LojaServiceImpl implements LojaService {
         return toResponse(lojaRepository.save(entity));
     }
 
-    public LojaResponse update(String nome, String descricao) {
+    public LojaResponse update(String nome, UpdateLojaRequest request) {
         List<LojaEntity> entity = lojaRepository.findByName(nome);
         if (entity.isEmpty()) {
             throw new NoSuchElementException("Loja nao encontrada.");
         }
-        if (!descricao.isBlank()) {
-            entity.getFirst().setDescricaoLoja(descricao);
-        }else{
-            throw new NoSuchElementException("Descricao deve ser preenchida.");
+        if (!request.getDescricaoLoja().isBlank()) {
+            entity.getFirst().setDescricaoLoja(request.getDescricaoLoja());
+        }
+        if (!request.getEndereco().isBlank()) {
+            entity.getFirst().setEndereco(request.getEndereco());
         }
         return toResponse(lojaRepository.update(entity.getFirst()));
     }
@@ -66,6 +68,7 @@ public class LojaServiceImpl implements LojaService {
                 .id(entity.getId())
                 .nomeLoja(entity.getNomeLoja())
                 .descricaoLoja(entity.getDescricaoLoja())
+                .endereco(entity.getEndereco())
                 .build();
     }
 
