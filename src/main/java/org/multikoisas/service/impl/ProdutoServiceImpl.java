@@ -67,7 +67,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 
         ProdutoEntity entity = new ProdutoEntity();
         entity.setNome(request.getNome());
-        if(request.getDescricaoProduto().isEmpty()){
+        if(!request.getDescricaoProduto().isEmpty()){
             entity.setDescricaoProduto(request.getDescricaoProduto());
         }
         return toResponse(produtoRepository.save(entity));
