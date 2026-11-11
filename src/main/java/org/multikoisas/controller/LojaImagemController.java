@@ -22,8 +22,7 @@ public class LojaImagemController {
     @GetMapping
     public ResponseEntity<Object> getImagemLojas(@RequestParam(required = false) Integer id , @RequestParam(required = false) String tipo) {
         List<LojaImagemResponse> response = lojaImagemService.getImagemLojas(id, tipo);
-        return response.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma imagem encontrada") :
-                ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

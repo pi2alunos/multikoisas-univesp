@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 @Service
@@ -90,9 +89,9 @@ public class LojaImagemServiceImpl implements LojaImagemService {
         } else {
             entity = repository.findById(id);
         }
-        if (entity.isEmpty()) {
-            throw new NoSuchElementException("Nenhuma imagem encontrada.");
-        }
+//        if (entity.isEmpty()) {
+//            throw new NoSuchElementException("Nenhuma imagem encontrada.");
+//        }
         return entity.stream().map(this::toResponse).toList();
     }
 
