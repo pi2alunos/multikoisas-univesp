@@ -25,7 +25,7 @@ public class ProdutoImagemController {
     @GetMapping
     public ResponseEntity<List<ProdutoImagemResponse>> getProdutos(@RequestParam(required = false) Integer produtoId) {
         List<ProdutoImagemResponse> response = service.getProdutos(produtoId);
-        return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
