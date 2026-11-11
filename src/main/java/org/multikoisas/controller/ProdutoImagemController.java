@@ -47,12 +47,12 @@ public class ProdutoImagemController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(@Valid @RequestBody ProdutoImagemDeleteRequest deleteRequest) {
+    public ResponseEntity<Object> delete(@Valid @RequestBody ProdutoImagemDeleteRequest deleteRequest) {
 
         service.delete(deleteRequest.getId(), deleteRequest.getProdutoId());
 
         // Retorna 204 No Content, que é o padrão HTTP ideal para deleções bem-sucedidas
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Imagem id: " + deleteRequest.getId() + " associado ao produto: " + deleteRequest.getProdutoId() + " foi removido com sucesso.");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

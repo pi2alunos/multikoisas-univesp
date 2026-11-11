@@ -53,7 +53,7 @@ public class S3StorageServiceImpl implements S3StorageService {
 
             // Devolve a URL pública assumindo que o seu bucket no Supabase está configurado como público
             // O padrão da URL pública no Supabase foge do endpoint S3 padrão. É construído desta forma:
-            return endpoint.replace("/s3", "") + "/public/" + bucketName + "/" + uniqueFileName;
+            return endpoint.replace("/s3", "") + "/object/public/" + bucketName + "/" + uniqueFileName;
 
         } catch (IOException e) {
             throw new RuntimeException("Falha ao processar o fluxo do ficheiro de imagem.", e);
