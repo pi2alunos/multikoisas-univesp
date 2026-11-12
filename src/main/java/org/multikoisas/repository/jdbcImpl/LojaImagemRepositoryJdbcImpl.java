@@ -24,7 +24,7 @@ public  class LojaImagemRepositoryJdbcImpl implements LojaImagemRepository {
     private final String SELECT_BY_ID_AND_TIPO = SELECT_BY_ID + " AND TRIM(UPPER(\"lojaImagemTipo\")) = TRIM(UPPER(:lojaImagemTipo))";
     private final String SELECT_BY_TIPO = SELECT_ALL + "WHERE TRIM(UPPER(\"lojaImagemTipo\")) = TRIM(UPPER(:lojaImagemTipo))";
     private final String INSERT = "INSERT INTO public.\"lojaImagem\" (\"imagemUrl\", \"lojaImagemTipo\") VALUES (:imagemUrl, :tipo)";
-    private final String DELETE_BY_ID_AND_TIPO = "DELETE FROM public.\"lojaImagem\" WHERE id = id AND TRIM(UPPER(\"lojaImagemTipo\")) = TRIM(UPPER(:lojaImagemTipo))";
+    private final String DELETE_BY_ID_AND_TIPO = "DELETE FROM public.\"lojaImagem\" WHERE id = :id AND TRIM(UPPER(\"lojaImagemTipo\")) = TRIM(UPPER(:lojaImagemTipo))";
 
 
     private final RowMapper<LojaImagemEntity> ROW_MAPPER = (rs , rowNum) -> {
