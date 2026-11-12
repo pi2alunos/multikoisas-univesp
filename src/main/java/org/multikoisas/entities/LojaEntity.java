@@ -13,5 +13,7 @@ public class LojaEntity {
     private String nomeLoja;
     private String descricaoLoja;
     private String endereco;
+    private String corDestaque;
+    private Integer colunaCarrossel;
 
 }

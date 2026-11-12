@@ -43,8 +43,8 @@ public class LojaImagemController {
 
     }
 
-    @DeleteMapping("/{tipo}")
-    public ResponseEntity<Object> delete(@PathVariable String tipo, @RequestParam Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable Integer id, @RequestParam String tipo) {
         lojaImagemService.delete(id, tipo);
         return ResponseEntity.status(HttpStatus.OK).body("Imagem deletada com sucesso.");
     }

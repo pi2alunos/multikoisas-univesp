@@ -22,8 +22,8 @@ public class LojaController {
     private final LojaService lojaService;
 
     @GetMapping
-    public ResponseEntity<Object> getLoja(@RequestParam(required = false) String nome){
-        List<LojaResponse> response = lojaService.getLoja(nome);
+    public ResponseEntity<Object> getLoja(@RequestParam(required = false) Integer id, @RequestParam(required = false) String nomeLoja){
+        List<LojaResponse> response = lojaService.getLoja(id, nomeLoja);
         return response.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Descricao e nome da loja nao encontrada") :
                 ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -31,21 +31,21 @@ public class LojaController {
     @PostMapping
     public ResponseEntity<Object> createLoja(@Valid @RequestBody LojaRequest lojaRequest){
         LojaResponse response = lojaService.save(lojaRequest);
-        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","Loja e descricao registrada.", "dados", response)) :
+        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","Loja cadastradda com sucesso.", "dados", response)) :
                 ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body("Nao foi possivel fazer o registro");
     }
 
-    @PutMapping("/{nomeLoja}")
-    public ResponseEntity<Object> updateLoja(@Valid @PathVariable String nomeLoja, @RequestBody UpdateLojaRequest request){
-        LojaResponse response = lojaService.update(nomeLoja, request);
-        return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Descricao da loja " + nomeLoja + " atualizada com sucesso.", "dados", response)):
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Nao encontramos registros para " + nomeLoja + "."));
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateLoja(@Valid @PathVariable Integer id, @RequestBody UpdateLojaRequest request){
+        LojaResponse response = lojaService.update(id, request);
+        return response != null ? ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Descricao da loja " + response.getNomeLoja() + " atualizada com sucesso.", "dados", response)):
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Nao encontramos registros para essa loja."));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Object> deleteLoja(@RequestParam String nome){
-        lojaService.delete(nome);
-        return ResponseEntity.status(HttpStatus.OK).body("Nome e descricao da loja " + nome + " deletado com sucesso.");
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteLoja(@PathVariable Integer id){
+        lojaService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Loja deletada com sucesso.");
     }
 
     @ExceptionHandler(NoSuchElementException.class)
@@ -54,6 +54,15 @@ public class LojaController {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handlerIllegalArgumentException(
+            IllegalArgumentException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(ex.getMessage());
     }
 }

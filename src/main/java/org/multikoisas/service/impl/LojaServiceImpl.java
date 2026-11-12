@@ -21,28 +21,45 @@ public class LojaServiceImpl implements LojaService {
 
     private final LojaRepository lojaRepository;
 
-    public List<LojaResponse> getLoja(String nomeLoja) {
+    @Override
+    public List<LojaResponse> getLoja(Integer id, String nomeLoja) {
         List<LojaEntity> entity;
-        if (nomeLoja == null) {
+        if (id == null && nomeLoja == null) {
             entity = lojaRepository.findAll();
-        }else {
+        }else if (nomeLoja != null) {
             entity = lojaRepository.findByName(nomeLoja);
+        }else {
+            entity = lojaRepository.findById(id);
         }
         return entity.stream().map(this::toResponse).toList();
     }
 
+    @Override
     public LojaResponse save(LojaRequest request) {
         validar(request);
+        List<LojaEntity> search = lojaRepository.findByName(request.getNomeLoja());
+        if (!search.isEmpty()) {
+            throw new IllegalArgumentException("ja existe uma loja com esse nome");
+        }
         LojaEntity entity = new LojaEntity();
-        entity.setNomeLoja(request.getNomeLoja().toUpperCase());
+        entity.setNomeLoja(request.getNomeLoja());
         if(!request.getDescricaoLoja().isBlank()){
             entity.setDescricaoLoja(request.getDescricaoLoja());
+        }
+        if(!request.getEndereco().isBlank()){
+            entity.setEndereco(request.getEndereco());
+        }
+        if(!request.getCorDestaque().isBlank()){
+            entity.setCorDestaque(request.getCorDestaque());
+        }
+        if(request.getColunaCarrossel() >= 1){
+            entity.setColunaCarrossel(request.getColunaCarrossel());
         }
         return toResponse(lojaRepository.save(entity));
     }
 
-    public LojaResponse update(String nome, UpdateLojaRequest request) {
-        List<LojaEntity> entity = lojaRepository.findByName(nome);
+    public LojaResponse update(Integer id, UpdateLojaRequest request) {
+        List<LojaEntity> entity = lojaRepository.findById(id);
         if (entity.isEmpty()) {
             throw new NoSuchElementException("Loja nao encontrada.");
         }
@@ -52,13 +69,21 @@ public class LojaServiceImpl implements LojaService {
         if (!request.getEndereco().isBlank()) {
             entity.getFirst().setEndereco(request.getEndereco());
         }
+        if (!request.getCorDestaque().isBlank())
+        {
+            entity.getFirst().setCorDestaque(request.getCorDestaque());
+        }
+        if (request.getColunaCarrossel() >= 1){
+            entity.getFirst().setColunaCarrossel(request.getColunaCarrossel());
+        }
         return toResponse(lojaRepository.update(entity.getFirst()));
     }
 
-    public void delete(String nome){
-        List<LojaEntity> entity = lojaRepository.findByName(nome);
+    @Override
+    public void delete(Integer id){
+        List<LojaEntity> entity = lojaRepository.findById(id);
         if(entity.isEmpty()){
-            throw new NoSuchElementException("Nao existe loja com esse nome para ser deletado");
+            throw new NoSuchElementException("Nao existe essa loja para ser deletado");
         }
             lojaRepository.delete(entity.getFirst().getId());
     }
@@ -69,6 +94,8 @@ public class LojaServiceImpl implements LojaService {
                 .nomeLoja(entity.getNomeLoja())
                 .descricaoLoja(entity.getDescricaoLoja())
                 .endereco(entity.getEndereco())
+                .corDestaque(entity.getCorDestaque())
+                .colunaCarrossel(entity.getColunaCarrossel())
                 .build();
     }
 

@@ -11,4 +11,6 @@ public class UpdateLojaRequest {
 
     private String descricaoLoja;
     private String endereco;
+    private String corDestaque;
+    private Integer colunaCarrossel;
 }

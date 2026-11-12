@@ -15,4 +15,6 @@ public class LojaRequest {
     private String descricaoLoja;
     @NotBlank(message = "o endereco e obrigatorio.")
     private String endereco;
+    private String corDestaque;
+    private Integer colunaCarrossel;
 }

@@ -10,8 +10,8 @@ import java.util.List;
 @Service
 public interface LojaService {
 
-    List<LojaResponse> getLoja(String nomeLoja);
+    List<LojaResponse> getLoja(Integer id, String nomeLoja);
     LojaResponse save(LojaRequest request);
-    LojaResponse update(String nome, UpdateLojaRequest request);
-    void delete(String nome);
+    LojaResponse update(Integer id, UpdateLojaRequest request);
+    void delete(Integer id);
 }

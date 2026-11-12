@@ -18,13 +18,13 @@ import java.util.Map;
 public class LojaRepositoryJdbcImpl implements LojaRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final static String SELECT_ALL = "SELECT id, \"nomeLoja\", \"descricaoLoja\", endereco FROM public.loja";
+    private final static String SELECT_ALL = "SELECT id, \"nomeLoja\", \"descricaoLoja\", endereco, \"corDestaque\", \"colunaCarrossel\" FROM public.loja";
     private final static String SELECT_BY_ID = SELECT_ALL + " WHERE id = :id";
     private final static String SELECT_BY_NAME = SELECT_ALL + " WHERE TRIM(UPPER(\"nomeLoja\")) = TRIM(UPPER(:nomeLoja))";
     private final static String SELECT_BY_ID_AND_NAME = SELECT_BY_ID + " AND TRIM(UPPER(\"nomeLoja\")) = TRIM(UPPER(:nomeLoja))";
-    private final static String INSERT = "INSERT INTO public.loja (\"nomeLoja\", \"descricaoLoja\", endereco) VALUES (:nomeLoja, :descricaoLoja, :endereco)";
+    private final static String INSERT = "INSERT INTO public.loja (\"nomeLoja\", \"descricaoLoja\", endereco, \"corDestaque\", \"colunaCarrossel\") VALUES (:nomeLoja, :descricaoLoja, :endereco, :corDestaque, :colunaCarrossel)";
     private final static String DELETE = "DELETE FROM public.loja WHERE id = :id";
-    private final static String UPDATE = "UPDATE public.loja SET \"nomeLoja\" = :nomeLoja, \"descricaoLoja\" = :descricaoLoja, endereco = :endereco WHERE id = :id";
+    private final static String UPDATE = "UPDATE public.loja SET \"nomeLoja\" = :nomeLoja, \"descricaoLoja\" = :descricaoLoja, endereco = :endereco, \"corDestaque\" = :corDestaque, \"colunaCarrossel\" = :colunaCarrossel WHERE id = :id";
 
     private static final RowMapper<LojaEntity> ROW_MAPPER_LOJA = (rs, rowNum) -> {
         LojaEntity entity = new LojaEntity();
@@ -32,6 +32,8 @@ public class LojaRepositoryJdbcImpl implements LojaRepository {
         entity.setNomeLoja(rs.getString("nomeLoja"));
         entity.setDescricaoLoja(rs.getString("descricaoLoja"));
         entity.setEndereco(rs.getString("endereco"));
+        entity.setCorDestaque(rs.getString("corDestaque"));
+        entity.setColunaCarrossel(rs.getInt("colunaCarrossel"));
         return entity;
     };
 

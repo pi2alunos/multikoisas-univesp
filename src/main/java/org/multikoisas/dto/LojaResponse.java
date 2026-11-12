@@ -13,4 +13,6 @@ public class LojaResponse {
     private String nomeLoja;
     private String descricaoLoja;
     private String endereco;
+    private String corDestaque;
+    private Integer colunaCarrossel;
 }
